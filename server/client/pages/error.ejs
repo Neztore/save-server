@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Image host</title>
+    <link rel="stylesheet" type="text/css" href="/css/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+</head>
+<body>
+<%- include('../partials/navbar.ejs'); %>
+<section class="section has-text-centered is-large">
+    <h2 class="title has-text-centered"><code> <%= code; %> </code>Something went wrong.</h2>
+    <h2 class="subtitle has-text-centered">Why not try to <a href="javascript:history.back()">go back</a>? Otherwise you can <a href="/">return home</a>. </h2>
+    <p><%= message %></p>
+</section>
+</body>
+</html>

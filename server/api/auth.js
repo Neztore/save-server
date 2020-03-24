@@ -4,12 +4,11 @@ const db = require("../util/db");
 const { isLength, isAscii } = require("validator");
 const { adminUser } = require("../../config");
 
-
-
-module.exports =  async function checkAuth (req, res, next) {
+function makeMiddleware(cookie) {
+    return async function checkAuth (req, res, next) {
         // For if auth is done, we're just checking member
-        const authorization = req.headers.authorization;
-        if (!authorization || !isLength(authorization, {min: 50, max: 50}) || !isAscii(req.headers.authorization)) {
+        let authorization = cookie ? req.cookies.authorization : req.headers.authorization;
+        if (!authorization || !isLength(authorization, {min: 50, max: 50}) || !isAscii(authorization)) {
             res.status(errors.unauthorized.error.status);
             return res.send(errors.unauthorized)
         } else {
@@ -31,4 +30,9 @@ module.exports =  async function checkAuth (req, res, next) {
             }
 
         }
-    };
+    }
+}
+
+
+module.exports = makeMiddleware(false);
+module.exports.cookie = makeMiddleware(true);

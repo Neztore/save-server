@@ -1,0 +1,151 @@
+<!--
+    Contains:
+
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Image host</title>
+    <link rel="stylesheet" type="text/css" href="/css/home.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+
+    <script>
+        try {
+            <%# Looks weird and kinda is weird, but passes the user to the client. %>
+            window.user = <%- JSON.stringify(user) %>
+        } catch (e) {
+            console.error("User was not provided by server!")
+        }
+    </script>
+    <script src="/js/home.js"></script>
+    <script src="/js/api.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+</head>
+<body>
+<%- include('../partials/navbar.ejs'); %>
+
+<div class="img-modal modal">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <p class="image is-4by3">
+            <img src="https://bulma.io/images/placeholders/1280x960.png" alt="">
+        </p>
+        <div class="level">
+            <div class="level-left">
+                <div class="level-item has-text-white">
+                    01/02/03 - Neztore
+                </div>
+            </div>
+
+            <div class="level-right">
+                <div class="level-item">
+                    <button class="button is-danger">
+                        <span class="ml">Delete</span>
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
+
+<section class="columns main">
+    <div class="column is-one-quarter">
+        <article class="panel">
+            <p class="panel-heading" id="hello">
+                Hey, Neztore!
+            </p>
+            <p class="panel-tabs" id="main-tabs">
+                <a class="is-active">Gallery</a>
+                <a>Links</a>
+                <a>Settings</a>
+            </p>
+    <div id="users">
+
+
+    </div>
+
+
+        </article>
+    </div>
+    <div class="column page-content">
+        <!-- Image modal -->
+
+
+        <!-- Gallery -->
+        <div id="gallery">
+            <nav class="level">
+                <div class="level-left">
+                    <div class="level-item">
+                        <h1 class="title">Gallery</h1>
+                    </div>
+                </div>
+                <div class="level-right">
+                    <div class="level-item">
+                        <div class="buttons has-addons filter">
+                            <button class="button">All</button>
+                            <button class="button is-active">Images</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <div class="columns is-offset-1 is-multiline">
+                <div class="column is-2">
+                    <a href="">
+                     <img src="https://placeimg.com/640/640/arch?t=1585092180400" alt="Placeholder">
+                    </a>
+                </div>
+                <div class="column is-2">
+                    <a href="">
+                        <img src="https://placeimg.com/640/640/arch?t=1585092180400" alt="Placeholder">
+                    </a>
+                </div>
+                <div class="column is-2">
+                    <a href="">
+                        <img src="https://placeimg.com/640/640/arch?t=1585092180400" alt="Placeholder">
+                    </a>
+                </div><div class="column is-2">
+                    <a href="">
+                        <img src="https://placeimg.com/640/640/arch?t=1585092180400" alt="Placeholder">
+                    </a>
+                </div>
+                <div class="column is-2">
+                    <a href="">
+                        <img src="https://placeimg.com/640/640/arch?t=1585092180400" alt="Placeholder">
+                    </a>
+                </div>
+                <div class="column is-2">
+                    <a href="">
+                        <img src="https://placeimg.com/640/640/arch?t=1585092180400" alt="Placeholder">
+                    </a>
+                </div>
+                <div class="column is-2">
+                    <a href="">
+                        <img src="https://placeimg.com/640/640/arch?t=1585092180400" alt="Placeholder">
+                    </a>
+                </div>
+
+
+
+            </div>
+
+        </div>
+
+        <!-- Links -->
+        <div id="links">
+            <h1 class="title">Links</h1>
+        </div>
+
+        <!-- Settings -->
+        <div id="settings">
+            <h1 class="title">Settings</h1>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

@@ -24,7 +24,7 @@ CREATE TABLE links
     owner character varying(50) COLLATE pg_catalog."default" NOT NULL,
     created timestamp with time zone NOT NULL DEFAULT now(),
     CONSTRAINT main PRIMARY KEY (id),
-    CONSTRAINT owner_check FOREIGN KEY (id)
+    CONSTRAINT owner_check FOREIGN KEY (owner)
         REFERENCES public.users (username) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE

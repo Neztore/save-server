@@ -1,10 +1,11 @@
 const express = require("express");
 const files = express.Router();
-const { errorCatch, generateFileName, isAlphaNumeric, errorGenerator, dest } = require("../util");
+const { errorCatch, generateFileName, errorGenerator, dest, prettyError } = require("../util");
 const multer = require("multer");
 const db = require("../util/db");
 const fs = require("fs");
 const auth = require("./auth");
+const { isAlphanumeric, isLength, isAscii } = require("validator");
 
 
 // Multer options
@@ -39,48 +40,43 @@ const upload = multer({ storage: storage, limits: {
     }});
 
 async function getFile(req, res, next) {
-    // remove ext
-    const without = removeExt(req.params.id);
-    const idStr = without === "" ? req.params.id : without;
-    if (isAlphaNumeric(idStr)) {
-        // Try to find it
-        fs.readdir(dest, function (err, files) {
-            if (err) throw err;
-            let found = false
-            for (let file of files) {
-                const noExt = removeExt(file);
-                const fileStr = noExt === "" ? req.params.id : noExt;
-                if (fileStr === idStr) {
-                    found = true;
-                    const options = {
-                        root: dest
-                    };
-
-                    res.sendFile(file, options, function (err) {
-                        if (err) {
-                            if (err) {
-                                next(err)
-                            }
-                        }
-                    });
-                    break;
+    const {id} = req.params;
+    if (id && isLength(id, {min:5, max:15}) && isAscii(id)) {
+        const without = removeExt(req.params.id);
+        const idStr = (without === "" ? req.params.id : without);
+        if (!isAlphanumeric(idStr)) {
+            res.status(400).send(prettyError(400, "You provided an invalid file identifier, it should be alphanumeric."))
+        }
+        const file = await db.getFile(idStr);
+        if (file) {
+            const loc = `${file.id}${file.extension ? `.${file.extension}`:""}`;
+            const options = {
+                root: dest
+            };
+            console.log("File!")
+            res.sendFile(loc, options, function (err) {
+                if (err) {
+                    next(err)
                 }
-            }
-            if (!found) next();
-        });
-
-
-
-    } else{
-        res.send(errorGenerator(400, "Invalid file name - it should be alphanumeric."))
+            });
+        } else {
+            // 404
+            next();
+        }
+    } else {
+        res.status(400).send(await prettyError(400, "You provided an invalid file identifier."))
     }
+    // remove ext
+
+
+
+
+
 }
-files.get('/:id', errorCatch(getFile));
+files.get('/file/:id', errorCatch(getFile));
 
 files.use(auth);
-files.get('/', errorCatch(async  function(req, res) {
-    res.send("Files root...")
-}));
+
 
 files.post('/', upload.array("files", 10), errorCatch(async  function(req, res) {
     if (!req.user) {
@@ -89,7 +85,6 @@ files.post('/', upload.array("files", 10), errorCatch(async  function(req, res) 
     if (req.files.length !==0) {
         for (let file of req.files) {
             db.addFile(file._tok, file._ext || undefined, req.user.username)
-
         }
         if (req.files.length === 1) {
             res.send(`https://${req.headers.host}/${req.files[0].filename}`)

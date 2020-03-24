@@ -1,6 +1,6 @@
 // Exports common errors and the generic error handling middleware.
-// COPYRIGHT Josh Muir 2019.
-
+const ejs = require("ejs");
+const path = require("path");
 
 // "Unfriendly" error messages.
 function errorHandler (error, req, res, next) {
@@ -26,15 +26,21 @@ function errorGenerator (status, message, additional) {
     }
   }
 }
+const errorPage = path.join(__dirname, "..", "client", "pages", "error.ejs");
+function prettyError (status, message) {
+  return new Promise(((resolve, reject) => {
+    ejs.renderFile(errorPage, {
+      code: status,
+      message
+    },{
 
-function prettyError (status, message, additional) {
-  return {
-    error: {
-      status,
-      message,
-      ...additional
-    }
-  }
+    }, function (err, str) {
+      if (err) return reject(err);
+      resolve(str);
+    })
+
+
+  }));
 }
 
 /*
@@ -64,4 +70,4 @@ const errors = {
 };
 
 
-module.exports = {errorHandler, errorGenerator, errors, errorCatch}
+module.exports = {errorHandler, errorGenerator, errors, errorCatch, prettyError};

@@ -18,20 +18,19 @@ module.exports = {
         const SQL = `SELECT * from links WHERE id = $1 LIMIT 1`;
         return this.getOne(SQL, [id])
     },
-    async getFiles(ext) {
-        // Optional: File extension of files to get todo: (Find out SQL OR/Provide a list of extensions?)
-        const SQL = `SELECT * from links WHERE id = $1 LIMIT 1`;
-        const s = await this.query(SQL, [id]);
-        return s[0];
+    async getFiles(username) {
+        const SQL = `SELECT * from files WHERE owner = $1 ORDER BY created ASC LIMIT 600;`;
+        const s = await this.query(SQL, [username]);
+        return s.rows;
     },
-     getLinks() {
-        const SQL = `SELECT * from links`;
-        const resp = this.query(SQL, [id]);
+     getLinks(username) {
+        const SQL = `SELECT * from links WHERE $1 ORDER BY created ASC LIMIT 600;`;
+        const resp = this.query(SQL, [username]);
         return resp.rows;
     },
-    getUsers() {
+    async getUsers() {
         const SQL = `SELECT username from users`;
-        const resp = this.query(SQL);
+        const resp = await this.query(SQL);
         return resp.rows;
     },
     async getUser(username) {
@@ -42,6 +41,7 @@ module.exports = {
         const SQL = "SELECT username, token FROM users WHERE token = $1 LIMIT 1;";
         return this.getOne(SQL, [token]);
     },
+
 
     // Adds
     addFile (id, extension, userId) {
@@ -54,7 +54,7 @@ module.exports = {
     },
     // Link shortener
     addLink (id, url, owner) {
-        const SQL = `INSERT INTO links (id, url, owner) VALUES ($1, $2, $3)`
+        const SQL = `INSERT INTO links (id, url, owner) VALUES ($1, $2, $3)`;
         return this.query(SQL, [id, url, owner])
     },
 
@@ -72,6 +72,10 @@ module.exports = {
         return this.query(SQL, [username]);
     },
 
+    async setPassword(username, password) {
+        const SQL = "UPDATE users SET password=$1 WHERE username=$2 LIMIT 1;";
+        return this.query(SQL, [password, username]);
+    },
     setToken (username, token) {
         const SQL = `UPDATE users SET token=$1 WHERE username=$2`;
         return this.query(SQL, [token, username])
