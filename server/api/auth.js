@@ -1,18 +1,15 @@
 // Auth middleware
 const {errorGenerator, errors, hasPerms, Perms} = require('../util');
 const db = require("../util/db");
-const { isLength, isAlphanumeric } = require("validator");
+const { isLength, isAscii } = require("validator");
 const { adminUser } = require("../../config");
 
 
 
 module.exports =  async function checkAuth (req, res, next) {
         // For if auth is done, we're just checking member
-        if (!req.cookies || !req.cookies.token || isEmpty(req.cookies.token) || !isLength(req.cookies.token, {min: 100, max: 100})) {
-
-        }
         const authorization = req.headers.authorization;
-        if (!authorization || !isLength(authorization, {min: 50, max: 50}) || !isAlphanumeric(req.headers.authorization)) {
+        if (!authorization || !isLength(authorization, {min: 50, max: 50}) || !isAscii(req.headers.authorization)) {
             res.status(errors.unauthorized.error.status);
             return res.send(errors.unauthorized)
         } else {

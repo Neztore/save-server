@@ -6,6 +6,7 @@ module.exports = {
         user: ""
     },
     // This is the user is configured the first time you run it.
-    adminUser: "root"
+    adminUser: "root",
+    hashRounds: 12
 
 }

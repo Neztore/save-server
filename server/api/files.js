@@ -1,6 +1,6 @@
 const express = require("express");
 const files = express.Router();
-const { errorCatch, generateToken, isAlphaNumeric, errorGenerator, dest } = require("../util");
+const { errorCatch, generateFileName, isAlphaNumeric, errorGenerator, dest } = require("../util");
 const multer = require("multer");
 const db = require("../util/db");
 const fs = require("fs");
@@ -11,7 +11,7 @@ const auth = require("./auth");
 const storage = multer.diskStorage({
     destination: dest,
     filename: async function (req, file, cb) {
-        const tok = generateToken(6);
+        const tok = generateFileName(6);
         file._tok = tok;
 
         // Extract extension

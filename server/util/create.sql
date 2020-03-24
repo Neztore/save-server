@@ -1,8 +1,8 @@
 CREATE TABLE public.users
 (
-    password character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    password character varying(60) COLLATE pg_catalog."default" NOT NULL,
     username character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    token character varying(50)[] COLLATE pg_catalog."default",
+    token character varying(50) COLLATE pg_catalog."default",
     CONSTRAINT username PRIMARY KEY (username)
 );
 CREATE TABLE files

@@ -1,7 +1,7 @@
 // URL Shortener and fetcher
 const express = require("express");
 const url = express.Router();
-const { errorCatch, generateToken, isAlphaNumeric, errorGenerator, dest } = require("../util");
+const { errorCatch, generateFileName, isAlphaNumeric, errorGenerator, dest } = require("../util");
 const path = require("path");
 const fs = require("fs");
 

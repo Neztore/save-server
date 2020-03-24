@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const files = require("./api/files");
+const users = require("./api/users")
 const {errorHandler} = require("./util");
 const bodyParser = require('body-parser');
 
@@ -15,6 +16,7 @@ app.use("/css", express.static(path.join(client, "css")));
 app.use("/js", express.static(path.join(client, "js")));
 // Routes
 app.use("/files", files.router);
+app.use("/users", users);
 
 // Main routes
 const getLoc = (n)=>path.join(pages, `${n}.ejs`);

@@ -5,17 +5,18 @@ const pool = new Pool();
 
 module.exports = {
     query: (text, params) => pool.query(text, params),
-
+    getOne: async function(text, params) {
+        const res = await this.query(text, params);
+        return res.rows[0];
+    },
     // Gets
     async getFile(id) {
         const SQL = `SELECT * from files WHERE id = $1 LIMIT 1`;
-        const files = await this.query(SQL, [id]);
-        return files[0];
+        return this.getOne(SQL, [id])
     },
     async getLink(id) {
         const SQL = `SELECT * from links WHERE id = $1 LIMIT 1`;
-        const s = await this.query(SQL, [id]);
-        return s[0];
+        return this.getOne(SQL, [id])
     },
     async getFiles(ext) {
         // Optional: File extension of files to get todo: (Find out SQL OR/Provide a list of extensions?)
@@ -25,21 +26,21 @@ module.exports = {
     },
      getLinks() {
         const SQL = `SELECT * from links`;
-        return this.query(SQL, [id]);
+        const resp = this.query(SQL, [id]);
+        return resp.rows;
     },
     getUsers() {
         const SQL = `SELECT username from users`;
-        return this.query(SQL);
+        const resp = this.query(SQL);
+        return resp.rows;
     },
     async getUser(username) {
         const SQL = `SELECT * from users WHERE username = $1 LIMIT 1;`;
-        const arr = await this.query(SQL, [username]);
-        return arr[0];
+        return this.getOne(SQL, [username]);
     },
     async getUserByToken(token) {
         const SQL = "SELECT username, token FROM users WHERE token = $1 LIMIT 1;";
-        const users = await this.query(SQL, [token]);
-        return users[0];
+        return this.getOne(SQL, [token]);
     },
 
     // Adds
@@ -47,8 +48,8 @@ module.exports = {
         const SQL = `INSERT INTO files (id, extension, owner) VALUES ($1, $2, $3)`;
         return this.query(SQL, [id, extension, userId])
     },
-    addUser (id, username, passwordHash) {
-        const SQL = `INSERT INTO users (username, password) VALUES ($1, S2)`;
+    addUser (username, passwordHash) {
+        const SQL = `INSERT INTO users (username, password) VALUES ($1, $2)`;
         return this.query(SQL, [username, passwordHash]);
     },
     // Link shortener
@@ -71,12 +72,12 @@ module.exports = {
         return this.query(SQL, [username]);
     },
 
-    setToken (userId, token) {
-        const SQL = `UPDATE users SET token=$1 WHERE id=$2`;
-        return this.query(SQL, [token, userId])
+    setToken (username, token) {
+        const SQL = `UPDATE users SET token=$1 WHERE username=$2`;
+        return this.query(SQL, [token, username])
     },
-    expireToken (userId) {
-        return this.setToken(userId, null);
+    expireToken (username) {
+        return this.setToken(username, undefined);
     },
 
 
