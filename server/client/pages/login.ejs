@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/sharedMeta.ejs'); %>
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="/css/login.css">
+    <script src="/js/login.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="/js/api.js"></script>
+</head>
+<body>
+<%- include('../partials/navbar.ejs'); %>
+<section class="section">
+    <div class="columns">
+
+        <div class="column is-half is-offset-one-quarter">
+
+
+            <div class="login-container box">
+
+                <h1 class="is-size-2 has-text-centered">Login</h1>
+                <p class="has-text-centered">Use this form to login to your existing account. You must have an account created for you by the site owner.</p>
+                <hr>
+
+                <div class="notification is-danger error-box" hidden></div>
+                <form class="form">
+                    <div class="field">
+                        <label class="label" for="username">Username</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Username" id="username" max="50">
+                            <p class="help">Enter your username here.</p>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label" for="password">Password</label>
+                        <div class="control">
+                            <input class="input" type="password" placeholder="Your password" name="password" id="password" min="6">
+                        </div>
+                        <div class="control">
+                            <label class="checkbox">
+                                <input type="checkbox" id="show-pass">
+                                Show password
+                            </label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <input class="button is-link" type="submit" id="submit" value="Submit" onsubmit="onSubmit"/>
+                        </div>
+                    </div>
+
+
+
+
+                </form>
+            </div>
+            <p class="has-text-centered has-text-grey">You may be committing an offense if trying to gain unauthorised access.</p>
+        </div>
+    </div>
+</section>
+
+
+
+
+</body>
+</html>

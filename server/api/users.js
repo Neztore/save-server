@@ -27,12 +27,24 @@ users.post("/login", errorCatch( async function (req, res) {
                 if (correct) {
                     if (user.token) {
                         // They have a token. Return it.
-                        return res.send({success: true, token: user.token})
+                        res.cookie('authorization', user.token, {
+                            httpOnly: true,
+                            /* A week */
+                            expires: new Date(Date.now() + 604800000),
+                            secure: req.secure || false
+                        });
+                        return res.send({success: true, message: "Logged in."})
                     } else {
                         // No token - generate.
                         const token = await generateToken();
                         await db.setToken(user.username, token);
-                        return res.send({success: true, token})
+                    res.cookie('authorization', token, {
+                            httpOnly: true,
+                            /* A week */
+                            expires: new Date(Date.now() + 604800000),
+                            secure: req.secure || false
+                        });
+                        return res.send({success: true, message: "Logged in."})
                     }
                 } else {
                     return res.status(403).send(errorGenerator(403, "Forbidden: Invalid username or password."))
@@ -46,7 +58,7 @@ users.post("/login", errorCatch( async function (req, res) {
     }
 }));
 
-users.use(auth.cookie);
+users.use(auth);
 
 users.get("/", errorCatch( async function (req, res) {
     const users = await db.getUsers()
@@ -158,6 +170,14 @@ users.patch("/:id/token", errorCatch(async function (req, res) {
     // Allows the user to generate a new token
     const newToken = await generateToken();
     await db.setToken(req.target.username, newToken);
+    if (req.user.username === req.target.username) {
+        res.cookie('authorization', newToken, {
+            httpOnly: true,
+            /* A week */
+            expires: new Date(Date.now() + 604800000),
+            secure: req.secure || false
+        });
+    }
     return res.send({success: true, token: newToken})
 }));
 
@@ -167,8 +187,8 @@ users.get("/:id/files", errorCatch(async function (req, res) {
 }));
 
 users.get("/:id/links", errorCatch(async function (req, res) {
-    const files = await db.getLinks(req.target.username);
-    res.send({success: true, files});
+    const links = await db.getLinks(req.target.username);
+    res.send({success: true, links: links || []});
 }));
 
 

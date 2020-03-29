@@ -1,10 +1,11 @@
 const express = require("express");
 const files = express.Router();
-const { errorCatch, generateFileName, errorGenerator, dest, prettyError } = require("../util");
+const { errorCatch, generateFileName, errorGenerator, dest, prettyError, validFile } = require("../util");
 const multer = require("multer");
 const db = require("../util/db");
-const fs = require("fs");
 const auth = require("./auth");
+const fs = require("fs");
+const path = require("path");
 const { isAlphanumeric, isLength, isAscii } = require("validator");
 
 
@@ -38,7 +39,7 @@ const removeExt=(str)=>str.substring(0, str.indexOf('.'));
 const upload = multer({ storage: storage, limits: {
         fileSize: 10000000
     }});
-
+const extensions = ["md", "js", "py", "ts", "Lua", "cpp", "c", "bat", "h", "pl", "java", "sh", "swift", "vb", "cs", "haml", "yml", "markdown", "hs", "pl", "ex", "yaml", "jsx", "tsx", "txt"];
 async function getFile(req, res, next) {
     const {id} = req.params;
     if (id && isLength(id, {min:5, max:15}) && isAscii(id)) {
@@ -50,10 +51,23 @@ async function getFile(req, res, next) {
         const file = await db.getFile(idStr);
         if (file) {
             const loc = `${file.id}${file.extension ? `.${file.extension}`:""}`;
+
+            if (file.extension && extensions.includes(file.extension.toLowerCase()) && !req.query.download) {
+                const content = await openFile(path.join(dest, loc));
+                return res.render(path.join(__dirname, "..", "client", "pages", "document.ejs"), {
+                    content:content,
+                    isRendered: (file.extension.toLowerCase() === "md" || file.extension.toLowerCase() === "markdown"),
+                    fileName: loc,
+                    owner: file.owner,
+                    // Technically someone could try to pretend to be logged in,
+                    // but all they get to see is a delete button. Nothing gained.
+                    isUser: !!req.cookies.authorization
+                });
+            }
+
             const options = {
                 root: dest
             };
-            console.log("File!")
             res.sendFile(loc, options, function (err) {
                 if (err) {
                     next(err)
@@ -66,14 +80,12 @@ async function getFile(req, res, next) {
     } else {
         res.status(400).send(await prettyError(400, "You provided an invalid file identifier."))
     }
-    // remove ext
-
 
 
 
 
 }
-files.get('/file/:id', errorCatch(getFile));
+files.get('/:id', errorCatch(getFile));
 
 files.use(auth);
 
@@ -98,7 +110,24 @@ files.post('/', upload.array("files", 10), errorCatch(async  function(req, res) 
 }));
 
 files.delete('/:id', errorCatch(async  function(req, res) {
-   res.status(errors.notImplemented.status).send(errors.notImplemented)
+   if (req.params.id && validFile(req.params.id)) {
+       const without = removeExt(req.params.id);
+       const idStr = (without === "" ? req.params.id : without);
+
+       const file = await db.getFile(idStr);
+       if (file) {
+           if ((file.owner === req.user.username) || req.user.isAdmin) {
+                await db.removeFile(file.id);
+                return res.send({success: true, message: "File deleted."})
+           } else {
+               return res.status(403).send(errorGenerator(403, "You are not allowed to edit that file."))
+           }
+       } else {
+           return res.status(400).send(errorGenerator(404, "File not found."))
+       }
+   } else {
+       return res.status(400).send(errorGenerator(400, "Invalid file id."))
+   }
 }));
 
 
@@ -113,3 +142,11 @@ module.exports = {
         - File extension extracted
         - Saved to database
  */
+function openFile(path) {
+    return new Promise(function (resolve, reject) {
+        fs.readFile(path, "utf8",(err, data) => {
+            if (err) reject(err);
+            resolve(data);
+        });
+    })
+}

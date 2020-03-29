@@ -10,8 +10,11 @@ const {errorHandler} = require("./util");
 const bodyParser = require('body-parser');
 const cookie = require("cookie-parser");
 
+const { shortenRequiresLogin } = require("../config") ;
+
 const app = express();
 app.set('view engine', 'ejs');
+app.enable('trust proxy');
 app.use(bodyParser.json());
 app.use(cookie());
 
@@ -30,15 +33,22 @@ app.use("/u", links);
 // Main routes
 const getLoc = (n)=>path.join(pages, `${n}.ejs`);
 app.get('/', (req, res) => res.render(getLoc("index")));
+app.get('/login', (req, res) => res.render(getLoc("login")));
 
-app.use("/home", auth.cookie);
-app.get('/home', (req, res) => {
-    res.render(getLoc("home"), {
+app.use('/dashboard', auth.redirect);
+app.get('/dashboard', async (req, res) => {
+    res.render(getLoc("dashboard"), {
         user: {
             username: req.user.username,
             isAdmin: req.user.isAdmin
         }
     });
+});
+if (shortenRequiresLogin) {
+    app.use('/short', auth.redirect)
+}
+app.get("/short", async (req, res) => {
+    res.render(getLoc("short"));
 });
 
 const {port} = require("../config.js");

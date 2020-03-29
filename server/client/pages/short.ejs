@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/sharedMeta.ejs'); %>
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="/css/login.css">
+    <script src="/js/short.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="/js/api.js"></script>
+</head>
+<body>
+<%- include('../partials/navbar.ejs'); %>
+<section class="section">
+    <div class="columns">
+
+        <div class="column is-half is-offset-one-quarter">
+
+
+            <div class="login-container box">
+
+                <h1 class="is-size-2 has-text-centered">Shorten URL</h1>
+                <p class="has-text-centered">Enter a URL for it to be shortened with a custom link.</p>
+                <hr>
+
+                <div class="notification is-danger error-box" hidden></div>
+                <div class="notification is-success result-box" hidden>
+                    <strong>Shortened version:</strong> <a href="" id="result-link"></a>
+                </div>
+                <form class="form">
+                    <div class="field">
+                        <label class="label" for="target">URL to shorten</label>
+                        <div class="control">
+                            <input class="input" type="url" placeholder="https://example.com" id="target" max="200" required>
+                            <p class="help">Enter your username here.</p>
+                        </div>
+                    </div>
+
+
+                    <div class="field">
+                        <div class="control">
+                            <input class="button is-link" type="submit" id="submit" value="Get Short version" onsubmit="onSubmit"/>
+                        </div>
+                    </div>
+
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+</body>
+</html>

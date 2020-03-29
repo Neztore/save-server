@@ -1,7 +1,8 @@
 const {randomBytes} = require("crypto");
 
 const path = require("path");
-const errors = require("./errors")
+const errors = require("./errors");
+const { isEmpty, isAlphanumeric, isLength, isWhitelisted } = require("validator");
 // Dirty? Absolutely. Works? Yes.
 function generateFileName(number) {
     number = parseInt(number);
@@ -13,9 +14,6 @@ function generateFileName(number) {
     return text
 }
 
-const isAlphaNumeric = ch => {
-    return ch.match(/^[a-z0-9]+$/i) !== null;
-};
 const dest = path.join(__dirname, "..", "..", "uploads");
 
 
@@ -30,10 +28,14 @@ function generateToken () {
         })
     })
 }
-
+const fileWhitelist = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.0123456789"
+const validTag = (tag)=>typeof tag == "string" && !isEmpty(tag) && isAlphanumeric(tag);
+const validFile = (tag)=>typeof tag == "string" && !isEmpty(tag) && isWhitelisted(tag, fileWhitelist) && isLength(tag, {min: 6, max: 20});
 module.exports = {
     generateToken,
     generateFileName,
     ...errors,
-    isAlphaNumeric,dest
+    isAlphaNumeric: isAlphanumeric,dest,
+    validTag,
+    validFile
 };

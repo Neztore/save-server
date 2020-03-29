@@ -1,0 +1,39 @@
+#code pre {
+    background-color: #282c34;
+
+}
+.warp-content {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+#markdownRender h1 {
+    padding-left: 1rem;
+}
+#markdownRender h2 {
+    padding-left: 1rem;
+}
+#markdownRender h3 {
+    padding-left: 1rem;
+}
+#markdownRender h4 {
+    padding-left: 1rem;
+}
+#markdownRender h5 {
+    padding-left: 1rem;
+}
+#markdownRender h6 {
+    padding-left: 1rem;
+}
+#markdownRender p {
+    padding-left: 1rem;
+}
+#level {
+    margin-bottom: 0.2em;
+    padding-left: 1vw;
+    padding-right: 1vw;
+}
+
+.hidden {
+    display: none;
+}

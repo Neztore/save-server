@@ -10,3 +10,23 @@
 .ml {
     margin-right: 0.3em;
 }
+#gallery .is-vcentered {
+    height: calc(99% - 1.5rem)
+}
+.outerBox {
+    height: 17.5vw;
+    cursor: pointer;
+}
+.file-box {
+    height: 100%;
+}
+.modal img {
+    max-height: 70vh;
+}
+.m-box {
+
+}
+.modal .modal-content .box {
+    min-height: 30vh;
+    margin-bottom: 0.2em;
+}

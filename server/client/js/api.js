@@ -31,11 +31,12 @@ Api.patch = function (url, options) {
         if (!options) options = {}
         options.method = "PATCH";
         options.credentials = "include"
+        options.headers.authorization = getCookie("authorization");
 
         // PATCH Body processing
         if (options.body && typeof options.body !== "string") {
             options.body = JSON.stringify(options.body);
-            if (!options.headers) options.headers = {};;
+            if (!options.headers) options.headers = {};
             options.headers["Content-Type"] = "application/json"
         }
 

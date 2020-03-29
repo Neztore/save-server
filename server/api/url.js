@@ -5,6 +5,7 @@ const { errorCatch, errorGenerator, generateFileName,prettyError } = require("..
 const { isURL, trim, isEmpty, isAlphanumeric } = require("validator");
 const auth = require("./auth");
 const db = require("../util/db");
+const { shortenRequiresLogin } = require("../../config");
 
 const validTag = (tag)=>typeof tag == "string" && !isEmpty(tag) && isAlphanumeric(tag);
 
@@ -22,7 +23,11 @@ url.get("/:tag", errorCatch(async function (req, res, next) {
         res.status(400).send(prettyError(400, "Invalid short URL tag."))
     }
 }));
-url.use(auth);
+
+if (shortenRequiresLogin) {
+    url.use('/', auth.redirect);
+}
+
 // Add new URL Shortening
 url.post("/", errorCatch(async function (req, res) {
     if (!req.user) {
@@ -39,6 +44,7 @@ url.post("/", errorCatch(async function (req, res) {
     }
 }));
 
+url.use(auth);
 // This is an API request, so it returns JSON.
 url.delete("/:tag", errorCatch(async function (req, res) {
     const { tag } = req.params;

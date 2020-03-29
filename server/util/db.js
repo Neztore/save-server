@@ -19,13 +19,13 @@ module.exports = {
         return this.getOne(SQL, [id])
     },
     async getFiles(username) {
-        const SQL = `SELECT * from files WHERE owner = $1 ORDER BY created ASC LIMIT 600;`;
+        const SQL = `SELECT * from files WHERE files.owner = $1 ORDER BY created DESC LIMIT 600;`;
         const s = await this.query(SQL, [username]);
         return s.rows;
     },
-     getLinks(username) {
-        const SQL = `SELECT * from links WHERE $1 ORDER BY created ASC LIMIT 600;`;
-        const resp = this.query(SQL, [username]);
+     async getLinks(username) {
+        const SQL = `SELECT * from links WHERE links.owner = $1 ORDER BY created DESC LIMIT 600;`;
+        const resp = await this.query(SQL, [username]);
         return resp.rows;
     },
     async getUsers() {
@@ -60,15 +60,15 @@ module.exports = {
 
     // Removes
     removeFile (id) {
-        const SQL = `DELETE FROM files WHERE id=$1 LIMIT 1;`;
+        const SQL = `DELETE FROM files WHERE id = $1`;
         return this.query(SQL, [id]);
     },
     removeLink (id) {
-        const SQL = `DELETE FROM links WHERE id = $1 LIMIT 1`
+        const SQL = `DELETE FROM links WHERE id = $1`
         return this.query(SQL, [id])
     },
     removeUser (username){
-        const SQL = `DELETE FROM users WHERE username = $1 LIMIT 1`;
+        const SQL = `DELETE FROM users WHERE username = $1`;
         return this.query(SQL, [username]);
     },
 

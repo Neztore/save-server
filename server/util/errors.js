@@ -53,7 +53,7 @@ const errorCatch = (fn) => (
   (req, res, next) => {
     const routePromise = fn(req, res, next);
     if (routePromise && routePromise.catch) {
-      routePromise.catch((err) => { next(err);  console.log("Route error caught", err.message)} );
+      routePromise.catch((err) => { next(err);  console.log("Route error caught", err.message);} );
 
     }
   }

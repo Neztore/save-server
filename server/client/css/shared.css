@@ -1,0 +1,81 @@
+.fixed-message {
+    position: fixed;
+    z-index: 9999;
+    top: 3.5rem;
+    right: 0.5rem;
+    transition: .3s;
+    max-width: 30rem;
+}
+.fixed-message .message {
+    margin-bottom: 0.5rem;
+}
+
+@-webkit-keyframes slideInRight {
+    from {
+        visibility: visible;
+        -webkit-transform: translate3d(150%, 0, 0);
+        transform: translate3d(150%, 0, 0);
+    }
+
+    to {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        visibility: visible;
+        -webkit-transform: translate3d(150%, 0, 0);
+        transform: translate3d(150%, 0, 0);
+    }
+
+    to {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.slideInRight {
+    -webkit-animation-name: slideInRight;
+    animation-name: slideInRight;
+    -webkit-animation-duration: .3s;
+    animation-duration: .3s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+@-webkit-keyframes slideOutRight {
+    from {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+
+    to {
+        visibility: hidden;
+        -webkit-transform: translate3d(150%, 0, 0);
+        transform: translate3d(150%, 0, 0);
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+
+    to {
+        visibility: hidden;
+        -webkit-transform: translate3d(150%, 0, 0);
+        transform: translate3d(150%, 0, 0);
+    }
+}
+
+.slideOutRight {
+    -webkit-animation-name: slideOutRight;
+    animation-name: slideOutRight;
+    -webkit-animation-duration: .3s;
+    animation-duration: .3s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}

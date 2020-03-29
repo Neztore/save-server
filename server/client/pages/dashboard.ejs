@@ -1,0 +1,200 @@
+<!--
+    Contains:
+
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/sharedMeta.ejs'); %>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Image host</title>
+    <link rel="stylesheet" type="text/css" href="/css/home.css">
+
+
+    <script>
+        try {
+            <%# Looks weird and kinda is weird, but passes the user to the client. %>
+            window.user = <%- JSON.stringify(user) %>
+        } catch (e) {
+            console.error("User was not provided by server!")
+        }
+    </script>
+    <script src="/js/storage.js"></script>
+    <script src="/js/home.js"></script>
+    <script src="/js/api.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+</head>
+<body>
+<%- include('../partials/navbar.ejs'); %>
+
+<div class="img-modal modal">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <p class="image">
+            <a href="#" id="img-link">
+                <img alt="Modal image" src="">
+            </a>
+        </p>
+        <div class="box" style="display:none;">
+            <h2 class="title has-text-centered" id="m-file-text"></h2>
+            <p class="subtitle has-text-centered" id="m-file-desc"></p>
+            <div class="has-text-centered">
+                    <a class="button is-info" id="modal-open">Open file.</a>
+            </div>
+
+        </div>
+        <div class="level">
+            <div class="level-left">
+                <div class="level-item has-text-white" id="modal-meta-text">
+                    01/02/03 - Neztore
+                </div>
+            </div>
+
+            <div class="level-right">
+                <div class="level-item">
+                    <button class="button is-danger" id="modal-delete">
+                        <span class="ml">Delete</span>
+                        <span class="fas fa-trash"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
+
+<section class="columns main">
+    <div class="column is-one-quarter">
+        <article class="panel">
+            <p class="panel-heading" id="hello">
+                Hey, Username!
+            </p>
+            <p class="panel-tabs" id="main-tabs">
+                <a class="is-active">Gallery</a>
+                <a>Links</a>
+                <a>Settings</a>
+            </p>
+    <div id="users">
+
+
+    </div>
+
+
+        </article>
+    </div>
+    <div class="column page-content">
+
+        <!-- Gallery -->
+        <div id="gallery">
+            <nav class="level">
+                <div class="level-left">
+                    <div class="level-item">
+                        <h1 class="title">Gallery</h1>
+                    </div>
+                </div>
+                <div class="level-right">
+                    <div class="level-item">
+                        <div class="buttons has-addons filter">
+                            <button class="button">All</button>
+                            <button class="button is-active">Images</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <div class="columns is-offset-1 is-multiline">
+
+
+
+            </div>
+
+        </div>
+
+        <!-- Links -->
+        <div id="links">
+            <h1 class="title">Links</h1>
+            <table class="table is-bordered ">
+                <thead>
+                <tr>
+                    <th>Redirect URL</th>
+                    <th>Target URL</th>
+                    <th>Created</th>
+                    <th>Modify</th>
+                </tr>
+                </thead>
+                <tbody id="links-parent">
+
+
+
+
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Settings -->
+        <div id="settings">
+            <h1 class="title">Settings</h1>
+            <div class="box">
+                <h2 class="is-size-5">Username: <span class="has-text-weight-semibold"  id="settings-username">root</span></h2>
+                <p>Use these buttons to download the configurations files for ShareX. You then need to select them under "Custom destinations".</p>
+                <p class="has-text-danger">Note: These files contain your user token. Do not share them with anyone.</p>
+                <button class="button" id="delete-user">Download upload config</button>
+                <button class="button" id="delete-user">Download link config</button>
+            </div>
+
+            <div class="box">
+                <h2 class="subtitle">Update password</h2>
+                <form class="form control">
+
+
+                    <div class="field">
+                        <label class="label" for="password">Password</label>
+                        <div class="control">
+                            <input class="input" type="password" placeholder="Your password" name="password" id="password" min="6">
+                            <p class="help">This should be more than 6 characters and complex.</p>
+                        </div>
+                    </div>
+
+                    <div class="field" id="pass2-field">
+                        <label for="password2" class="label">Confirm password</label>
+                        <div class="control">
+                            <input class="input" type="password" placeholder="The same as above!" name="password2" id="password2">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="control">
+                            <input class="button is-primary" type="submit" id="submit" value="Submit"/>
+                        </div>
+
+                    </div>
+
+
+
+                </form>
+            </div>
+
+            <div class="box">
+                <h2 class="subtitle">Update token</h2>
+                <p>This will reset the token used to upload files and access the website, and issue a new one.</p>
+                <p>This is primarily for if you believe your token has been leaked. If you reset this, you will need to reconfigure ShareX.</p>
+                <button class="button" id="update-token">
+                    Reset token
+                </button>
+            </div>
+            <div class="box">
+               <h2 class="subtitle">Delete user</h2>
+                <p class="notification is-warning"><strong>Warning</strong> Deleting is irreversible, there is no going back.<br>
+                    - If you choose to <u>delete user and all content</u>, their files and links will also be removed.<br>
+                    - If you choose to delete <u>only user</u>, their content will moved to be owned by the admin user, root.
+                </p>
+                <button class="button is-danger" id="delete-all">Delete user and all content</button>
+                <button class="button" id="delete-user">Delete user only</button>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+</body>
+</html>
