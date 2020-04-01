@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     async function onSubmit (e) {
-        e.preventDefault()
+        e.preventDefault();
         const username = fields.username.value;
         const password = fields.password.value;
         if (username && password && username !== "" && password !== "") {
@@ -23,16 +23,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
             if (res.error) {
-                showError(`Incorrect username or password: Please check them and try again.`)
+                showError(`Incorrect username or password: Please check them and try again.`);
+                return false
             } else {
-                window.document.location.href = "/home"
+                window.document.location.href = "/dashboard"
             }
         } else {
-            showError("Please fill out both username and password.")
+            showError("Please fill out both username and password.");
+            return false
         }
         return false;
     }
-    form.addEventListener("submit", onSubmit)
+    form.onsubmit = onSubmit;
 
 
     function showError (text) {

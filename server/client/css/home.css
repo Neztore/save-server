@@ -30,3 +30,7 @@
     min-height: 30vh;
     margin-bottom: 0.2em;
 }
+.modal .modal-content .image img {
+    width: auto;
+    margin: auto;
+}

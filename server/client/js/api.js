@@ -1,5 +1,6 @@
 const Api = {};
 const BaseUrl = location.origin;
+const ApiUrl = `${BaseUrl}/api`;
 
 Api.get = function (url, options) {
     if (!options) options = {};
@@ -11,7 +12,6 @@ Api.post = function (url, options) {
     try {
         if (!options) options = {};
         options.method = "POST";
-        options.credentials = "include";
 
         // POST Body processing
         if (options.body && typeof options.body !== "string") {
@@ -30,8 +30,6 @@ Api.patch = function (url, options) {
     try {
         if (!options) options = {}
         options.method = "PATCH";
-        options.credentials = "include"
-        options.headers.authorization = getCookie("authorization");
 
         // PATCH Body processing
         if (options.body && typeof options.body !== "string") {
@@ -50,7 +48,6 @@ Api.delete = function (url, options) {
     try {
         if (!options) options = {};
         options.method = "DELETE";
-        options.credentials = "include";
 
         return this._makeRequest(url, options)
     } catch (e) {
@@ -63,7 +60,7 @@ Api._makeRequest = async function (url, options) {
     const startChar = url.substr(0, 1);
     options.credentials = "include";
 
-    url = (startChar === '/') ? `${BaseUrl}${url}` : `/${url}`;
+    url = (startChar === '/') ? `${ApiUrl}${url}` : `/${url}`;
     const req = await fetch(url, options);
     return await req.json()
 };

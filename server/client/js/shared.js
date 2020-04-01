@@ -45,11 +45,11 @@ function deleteFile(fileInfo, cb) {
                 if (res.success) {
                     if (cb) cb(true);
                 } else {
-                    alert(res.error.message);
+                    showError(res.error);
                     if (cb) cb();
                 }
             })
-            .catch(console.error);
+            .catch(showError);
         // Incase it's open.
     } else {
         if (cb) cb();
@@ -58,6 +58,10 @@ function deleteFile(fileInfo, cb) {
 
 // We create dynamically because it's easier than ensuring the HTML code exists on every page.
 function showMessage(headerContent, content, colour, closeAfter, closeCb) {
+    if (closeAfter < 500) {
+        // Assume it's been provided in seconds.
+        closeAfter = closeAfter * 1000
+    }
     let parent = document.getElementById("message-parent");
     if (!parent) {
         parent = document.createElement("div");
@@ -82,10 +86,14 @@ function showMessage(headerContent, content, colour, closeAfter, closeCb) {
     header.appendChild(deleteButton);
 
     function close() {
-        message.classList.remove("slideInRight")
-        message.classList.add("slideOutRight");
-        setTimeout(message.remove, 3000);
-        if (closeCb) closeCb();
+        if (message) {
+            message.classList.remove("slideInRight")
+            message.classList.add("slideOutRight");
+            setTimeout(function () {
+                message.remove();
+            }, 2000);
+            if (closeCb) closeCb();
+        }
     }
     deleteButton.onclick =close;
 
@@ -110,3 +118,29 @@ function showError(error) {
     const content = typeof error === "string" ? error : error.message;
    return showMessage(errorText, content, "danger")
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Get all "navbar-burger" elements
+    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+    // Check if there are any navbar burgers
+    if ($navbarBurgers.length > 0) {
+
+        // Add a click event on each of them
+        $navbarBurgers.forEach( el => {
+            el.addEventListener('click', () => {
+
+                // Get the target from the "data-target" attribute
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+
+                // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+
+            });
+        });
+    }
+
+});

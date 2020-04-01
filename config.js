@@ -7,6 +7,8 @@ module.exports = {
     },
     // This is the user is configured the first time you run it.
     adminUser: "root",
-    hashRounds: 12
+    hashRounds: 12,
+    secure: false,
+    shortenRequiresLogin: true
 
 }

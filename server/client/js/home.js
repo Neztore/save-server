@@ -142,6 +142,11 @@ window.addEventListener("DOMContentLoaded", function () {
         setTarget(username);
         getFiles();
         getLinks();
+        userManagement();
+    }
+    const refreshButton = document.getElementById("refresh");
+    refreshButton.onclick = function () {
+        updateTargetUser(getTarget());
     }
 
     // Gallery
@@ -236,7 +241,7 @@ window.addEventListener("DOMContentLoaded", function () {
         col.className = "column is-3 outerBox";
         const img = document.createElement("div");
 
-        const url = `${BaseUrl}/files/${fileInfo.id}.${fileInfo.extension}`;
+        const url = `${BaseUrl}/${fileInfo.id}.${fileInfo.extension}`;
         img.style.backgroundImage = `url('${url}')`;
         img.style.backgroundSize = "cover";
         img.className = "file-box box";
@@ -430,44 +435,162 @@ window.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // User management
+    // User management - Every time target updates.
     function userManagement() {
         const tar = getTarget();
-         const usernameBox = document.getElementById("settings-username");
+        const usernameBox = document.getElementById("settings-username");
         usernameBox.innerText = tar;
-
-        const secondPassField = document.getElementById("pass2-field");
-        if (window.user.isAdmin) {
-            secondPassField.remove();
-        }
-
-        const tokenButton = document.getElementById("update-token");
-        tokenButton.onclick = function () {
-            tokenButton.classList.add("is-loading");
-            const sure = prompt("Are you sure you want to do this? You will need to update the ShareX config for this user.");
-            if (sure) {
-                Api.patch(`/users/${tar.username}/token`)
-                    .then(function (res) {
-                        if (res.success) {
-                            tokenButton.classList.remove("is-loading");
-
-                        } else {
-                            showError(res.error);
-
-                        }
-
-                    })
-                    .catch((e)=> showError(e));
-
-            } else {
-                tokenButton.classList.remove("is-loading");
-            }
-        }
-
-
     }
     userManagement()
 
+    const secondPassField = document.getElementById("pass2-field");
+    if (window.user.isAdmin) {
+        secondPassField.remove();
+    }
+    (function passwordReset() {
+        // Password reset
+        const form = document.getElementById("password-change-form");
+        const passwordInput = document.getElementById("password");
+        const passwordConfirm = document.getElementById("password2");
+        const passView =  document.getElementById("show-pass");
+        const errorBox = document.getElementById("password-error-box");
+        const submitButton = document.getElementById("password-reset-submit")
+
+        passView.addEventListener('change', function () {
+            const state = passView.checked;
+            passwordInput.type = state ? "text" : "password"
+        });
+
+        // This means that we use built in validation and means password managers etc. generally just work. Much better than binding to click.
+        form.onsubmit = function (e) {
+            e.preventDefault();
+            const pass = passwordInput.value;
+
+            if (!window.user.isAdmin) {
+                // Check confirm is there
+                const oldPass = passwordConfirm.value;
+
+                if (!oldPass || oldPass === "" || oldPass.length <= 3) {
+                    showPasswordError("You must provide your current password. If you do not know it, ask the root user to reset it for you.");
+                    return false
+                }
+            }
+
+            if (pass && pass !== "" && pass.length > 6) {
+                // it's good - we already checked that it matches.
+                submitButton.classList.add("is-loading");
+                errorBox.hidden = true;
+                const target = getTarget();
+                Api.patch(`/users/${target}/password`, {
+                    body: {
+                        newPassword: pass,
+                        oldPassword: passwordConfirm ? passwordConfirm.value : undefined
+                    }
+                })
+                    .then(function (res) {
+                        if (!res.error) {
+                            submitButton.classList.remove("is-loading");
+                            showMessage("Password updated", `${target === window.user.username ? "Your":`${target}'s `} password was successfully updated.`, "success", 10000)
+
+                        } else {
+                            showError(res.error);
+                            submitButton.classList.remove("is-loading");
+                        }
+
+                    })
+                    .catch(function (e) {
+                        submitButton.classList.remove("is-loading");
+                        showError(e);
+                    });
+            } else {
+                showPasswordError("You must fill out the password. It should be more than 6 characters.")
+                return false
+            }
+
+            function showPasswordError(text) {
+                errorBox.innerText = text;
+                errorBox.hidden = false
+            }
+        };
+    })();
+    const tokenB = document.getElementById("update-token");
+    function onTokenClick () {
+        tokenB.classList.add("is-loading");
+        const tar = getTarget()
+        const sure = confirm("Are you sure you want to do this? You will need to update the ShareX config for this user.");
+        if (sure) {
+            Api.patch(`/users/${tar}/token`)
+                .then(function (res) {
+                    if (!res.error) {
+                        tokenB.classList.remove("is-loading");
+                        const tar = getTarget();
+                        const str = tar === window.user.username ? "Your token was successfully reset. Make sure you update your ShareX config!" : `${tar}'s token was reset. Make sure they update their ShareX config!`;
+
+                        showMessage("Token reset", str, "success", 15000);
+                        const tokenBox = document.getElementById("reset-box");
+                        tokenBox.innerHTML = `Success! New token: <code>${res.token}</code>.`
+                        tokenBox.hidden = false
+
+                    } else {
+                        showError(res.error);
+                    }
+
+                })
+                .catch((e)=> showError(e));
+
+        } else {
+            tokenB.classList.remove("is-loading");
+        }
+    }
+    tokenB.onclick = onTokenClick;
+
+
+    (function deleteUser() {
+        const deleteAll = document.getElementById("delete-all");
+        const deleteUsr = document.getElementById("delete-user");
+        deleteAll.onclick = function () {
+            deleteUser(true)
+
+        };
+
+        deleteUsr.onclick = function () {
+            deleteUser(false)
+
+        };
+
+        function deleteUser(deleteFiles) {
+            // we don't want user to click the other one while it's deleting
+            deleteAll.classList.add("is-loading");
+            deleteUsr.classList.add("is-loading");
+
+            const target = getTarget()
+            const sure = confirm(`Are you sure you want to delete ${target} ${deleteFiles ? "and all of their files":""}?`)
+            if (!sure) {
+                doneLoading()
+                return false;
+            }
+
+            Api.delete(`/users/${target}?deleteFiles=${deleteFiles}`)
+                .then(function (res) {
+                    if (res.error) {
+                        showError(res.error)
+                        doneLoading()
+                    } else {
+                        // it went ok
+                        doneLoading()
+                        updateTargetUser(window.user.username)
+                    }
+                })
+                .catch(function () {
+                   doneLoading()
+                })
+
+            function doneLoading() {
+                deleteAll.classList.remove("is-loading");
+                deleteUsr.classList.remove("is-loading");
+            }
+        }
+    })();
 
 });
 

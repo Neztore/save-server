@@ -3,7 +3,7 @@ const express = require("express");
 const url = express.Router();
 const { errorCatch, errorGenerator, generateFileName,prettyError } = require("../util");
 const { isURL, trim, isEmpty, isAlphanumeric } = require("validator");
-const auth = require("./auth");
+const auth = require("../middleware/auth");
 const db = require("../util/db");
 const { shortenRequiresLogin } = require("../../config");
 

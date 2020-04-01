@@ -90,8 +90,11 @@
             <nav class="level">
                 <div class="level-left">
                     <div class="level-item">
-                        <h1 class="title">Gallery</h1>
+                       <h1 class="title">Gallery</h1>
                     </div>
+                </div>
+                <div class="level-item">
+                    <button class="button is-small is-rounded" id="refresh"><span>Refresh</span> <span class="icon is-small"><i class="fas fa-sync"></i></span></button>
                 </div>
                 <div class="level-right">
                     <div class="level-item">
@@ -133,38 +136,55 @@
 
         <!-- Settings -->
         <div id="settings">
-            <h1 class="title">Settings</h1>
+            <nav class="level">
+                <div class="level-left">
+                    <div class="level-item">
+                        <h1 class="title">Settings</h1>
+                    </div>
+                </div>
+                <div class="level-right">
+                    <div class="level-item">
+                        <button class="button is-success">Create user</button>
+                    </div>
+                </div>
+            </nav>
             <div class="box">
                 <h2 class="is-size-5">Username: <span class="has-text-weight-semibold"  id="settings-username">root</span></h2>
                 <p>Use these buttons to download the configurations files for ShareX. You then need to select them under "Custom destinations".</p>
                 <p class="has-text-danger">Note: These files contain your user token. Do not share them with anyone.</p>
-                <button class="button" id="delete-user">Download upload config</button>
-                <button class="button" id="delete-user">Download link config</button>
+                <button class="button" id="">Download upload config</button>
+                <button class="button" id="">Download link config</button>
             </div>
 
             <div class="box">
                 <h2 class="subtitle">Update password</h2>
-                <form class="form control">
-
+                <form class="form control" id="password-change-form">
+                    <div class="notification is-danger is-light" id="password-error-box" hidden></div>
 
                     <div class="field">
-                        <label class="label" for="password">Password</label>
+                        <label class="label" for="password">New Password</label>
                         <div class="control">
-                            <input class="input" type="password" placeholder="Your password" name="password" id="password" min="6">
+                            <input class="input" type="password" placeholder="Your password" name="password" id="password" min="6" required>
                             <p class="help">This should be more than 6 characters and complex.</p>
+                        </div>
+                        <div class="control">
+                            <label class="checkbox">
+                                <input type="checkbox" id="show-pass">
+                                Show password
+                            </label>
                         </div>
                     </div>
 
                     <div class="field" id="pass2-field">
-                        <label for="password2" class="label">Confirm password</label>
+                        <label for="password2" class="label">Current password</label>
                         <div class="control">
-                            <input class="input" type="password" placeholder="The same as above!" name="password2" id="password2">
+                            <input class="input" type="password" placeholder="Your current password" name="password2" id="password2">
                         </div>
                     </div>
 
                     <div class="field">
                         <div class="control">
-                            <input class="button is-primary" type="submit" id="submit" value="Submit"/>
+                            <button class="button is-primary" type="submit" id="password-reset-submit">Submit</button>
                         </div>
 
                     </div>
@@ -178,6 +198,7 @@
                 <h2 class="subtitle">Update token</h2>
                 <p>This will reset the token used to upload files and access the website, and issue a new one.</p>
                 <p>This is primarily for if you believe your token has been leaked. If you reset this, you will need to reconfigure ShareX.</p>
+                <p class="notification" hidden id="reset-box"></p>
                 <button class="button" id="update-token">
                     Reset token
                 </button>
@@ -188,8 +209,11 @@
                     - If you choose to <u>delete user and all content</u>, their files and links will also be removed.<br>
                     - If you choose to delete <u>only user</u>, their content will moved to be owned by the admin user, root.
                 </p>
-                <button class="button is-danger" id="delete-all">Delete user and all content</button>
-                <button class="button" id="delete-user">Delete user only</button>
+                <div class="buttons">
+                    <button class="button is-danger" id="delete-all">Delete user and all content</button>
+                    <button class="button" id="delete-user">Delete user</button>
+                </div>
+
             </div>
 
         </div>

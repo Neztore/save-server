@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (res.error) {
                 showError(`Something went wrong: ${res.error.message}`)
             } else {
-                const resultBox = document.getElementsByClassName("result-box")[0]
+                const resultBox = document.getElementsByClassName("result-box")[0];
                 const resultLink = document.getElementById("result-link");
                 resultLink.href = res.url;
                 resultLink.innerText = res.url;

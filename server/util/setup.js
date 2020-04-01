@@ -17,7 +17,7 @@ const config = require("../../config");
 const { hash } = require("bcrypt");
 
 const file = "create.sql";
-fs.readFile(file, "utf8",async function(err, data) {
+/*fs.readFile(file, "utf8",async function(err, data) {
     if (err) console.error("Warning: Failed to create tables.\n",err.message);
     const statements = data.split(";");
     let errors = 0;
@@ -49,4 +49,7 @@ async function createRoot() {
         await db.addUser("root", hashed);
         console.log("Created root user!")
     }
-}
+}*/
+db.getUser("NewUser")
+    .then(console.log)
+    .catch(console.error)

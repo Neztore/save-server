@@ -3,7 +3,7 @@ const files = express.Router();
 const { errorCatch, generateFileName, errorGenerator, dest, prettyError, validFile } = require("../util");
 const multer = require("multer");
 const db = require("../util/db");
-const auth = require("./auth");
+const auth = require("../middleware/auth");
 const fs = require("fs");
 const path = require("path");
 const { isAlphanumeric, isLength, isAscii } = require("validator");
@@ -89,7 +89,7 @@ files.get('/:id', errorCatch(getFile));
 
 files.use(auth);
 
-
+// Supports uploading multiple files, even though ShareX doesn't.
 files.post('/', upload.array("files", 10), errorCatch(async  function(req, res) {
     if (!req.user) {
         return console.log("what??")
@@ -98,18 +98,21 @@ files.post('/', upload.array("files", 10), errorCatch(async  function(req, res) 
         for (let file of req.files) {
             db.addFile(file._tok, file._ext || undefined, req.user.username)
         }
-        if (req.files.length === 1) {
-            res.send(`https://${req.headers.host}/${req.files[0].filename}`)
-        } else {
+        const base = `${req.secure ? "https":"http"}://${req.hostname}`
+        res.send({
+            url: `${base}/${req.files[0].filename}`,
+            deletionUrl: `${base}/dashboard`
 
-        }
+        })
+
+
     } else {
         res.status(400).send(errorGenerator(400, "No file upload detected!"))
     }
 
 }));
 
-files.delete('/:id', errorCatch(async  function(req, res) {
+files.delete('/:id', errorCatch(async  function(req, res, next) {
    if (req.params.id && validFile(req.params.id)) {
        const without = removeExt(req.params.id);
        const idStr = (without === "" ? req.params.id : without);
@@ -118,7 +121,18 @@ files.delete('/:id', errorCatch(async  function(req, res) {
        if (file) {
            if ((file.owner === req.user.username) || req.user.isAdmin) {
                 await db.removeFile(file.id);
-                return res.send({success: true, message: "File deleted."})
+               const loc = `${file.id}${file.extension ? `.${file.extension}`:""}`;
+
+               fs.unlink(path.join(dest, loc), (err) => {
+                   if (err) {
+                       if (err.code === "ENOENT") {
+                           console.log(`Tried to delete file ${loc} but it was already removed.`)
+                       } else {
+                           return next(err);
+                       }
+                   }
+                   return res.send({success: true, message: "File deleted."})
+               });
            } else {
                return res.status(403).send(errorGenerator(403, "You are not allowed to edit that file."))
            }

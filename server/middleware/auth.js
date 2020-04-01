@@ -6,9 +6,14 @@ const { adminUser } = require("../../config");
 
 async function checkToken (req) {
     let authorization = req.headers.authorization ? req.headers.authorization : req.cookies.authorization;
-    if (!authorization || !isLength(authorization, {min: 50, max: 50}) || !isAscii(authorization)) {
+    if (!authorization || !isAscii(authorization)) {
         return false
     } else {
+        authorization = decodeURIComponent(authorization);
+        if (!isLength(authorization, {min: 50, max: 50}) ) {
+            return false
+        }
+
         // An authorization token has been supplied. Verify it.
         const user = await db.getUserByToken(authorization);
         if (!user) {
