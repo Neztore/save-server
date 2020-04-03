@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <%- include('../partials/sharedMeta.ejs'); %>
-    <title>Image host</title>
     <link rel="stylesheet" type="text/css" href="/css/index.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="/js/index.js"></script>
 </head>
 <body>
 <%- include('../partials/navbar.ejs'); %>
@@ -14,14 +14,38 @@
             <h1 class="title">
                 <span class="tagline-one">save</span><span class="tagline-two">server</span>
             </h1>
-            <h2 class="subtitle has-text-white">
-                     By Neztore
-            </h2>
+
         </div>
     </div>
 </section>
-<section>
-    <h1 class="subtitle">Sharex host</h1>
+<section class="section has-text-centered">
+    <h1 class="title has-text-centered"><span id="hostname"></span> ShareX file server</h1>
+    <h2 class="subtitle has-text-centered">Save-Server is a powerful open source ShareX file host, which allows for images and other files to be uploaded to a custom server.</h2>
+    <p>If you've been given an account on this instance - or you've just finished setting up - head to the <a href="/dashboard">dashboard</a> to view your files and settings.</p>
+    <h3 class="subtitle">About this instance</h3>
+    <nav class="level">
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">Version</p>
+                <p class="subtitle"><%= version %></p>
+            </div>
+        </div>
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">Uptime</p>
+                <p class="subtitle"><%= runningFor %> hours</p>
+            </div>
+        </div>
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading"><span class="icon"><i class="fab fa-github"></i></span>Source code</p>
+                <a class="subtitle has-text-link" href="https://github.com/neztore/save-server">Save-Server</a>
+            </div>
+        </div>
+    </nav>
+    <hr class="spacer">
+    <small>You can edit this page to say whatever you like by editing the <code>server/client/pages/index.ejs</code> file.</small>
+    <p>Save-Server by Neztore</p>
 </section>
 </body>
 </html>

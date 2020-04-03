@@ -1,10 +1,9 @@
 // Auth middleware
-const { errors } = require("../util");
+const { errors, adminUser } = require("../util");
 const db = require("../util/db");
 const { isLength, isAscii } = require("validator");
 
 async function checkToken (req) {
-	const { adminUser } = req.config;
 	let authorization = req.headers.authorization ? req.headers.authorization : req.cookies.authorization;
 	if (!authorization || !isAscii(authorization)) {
 		return false;

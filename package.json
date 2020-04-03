@@ -1,11 +1,13 @@
 {
   "name": "save-server",
   "version": "1.0.0",
-  "description": "A ShareX server built on Express, Bulma and PostgreSQl with User support.",
+  "description": "A ShareX server built on Express, Bulma and SQLite with User support.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ."
   },
+  "keywords": ["sharex", "server", "image server", "image host", "save-server"],
   "author": "Neztore",
   "license": "MIT",
   "dependencies": {
@@ -16,6 +18,7 @@
     "express": "^4.17.1",
     "multer": "^1.4.2",
     "pg": "^7.18.2",
+    "sqlite3": "^4.1.1",
     "validator": "^13.0.0"
   },
   "devDependencies": {

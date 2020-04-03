@@ -11,6 +11,7 @@ const auth = require("./middleware/auth");
 const { errorHandler } = require("./util");
 const bodyParser = require("body-parser");
 const cookie = require("cookie-parser");
+const { version } = require("../package");
 
 const app = express();
 
@@ -20,16 +21,14 @@ app.enable("trust proxy");
 app.use(bodyParser.json());
 app.use(cookie());
 app.set("x-powered-by", "false");
-app.use(function (req,res,next) {
-	req.config = app.get("save_config");
-	next();
-});
+
 
 // Client
 const client = path.join(__dirname, "client");
 const pages = path.join(client, "pages");
 app.use("/css", express.static(path.join(client, "css")));
 app.use("/js", express.static(path.join(client, "js")));
+app.use("/favicon.ico", express.static(path.join(client, "favicon.ico")));
 
 // Routes
 app.use("/api/files", files.router);
@@ -40,7 +39,12 @@ app.use("/u", links);
 
 // Main routes
 const getLoc = (n) => path.join(pages, `${n}.ejs`);
-app.get("/", (req, res) => res.render(getLoc("index")));
+app.get("/", (req, res) => {
+	const runningHours = process.uptime()/(60*60);
+	return res.render(getLoc("index"), {
+		runningFor: (Math.floor(runningHours * 10) / 10), // uptime in hours, rounded to 1 decimal
+		version
+	});});
 app.get("/login", (req, res) => res.render(getLoc("login")));
 
 app.use("/dashboard", auth.redirect);
@@ -70,9 +74,7 @@ process.on("uncaughtException", err => {
 	console.error("There was an uncaught error", err);
 });
 
-module.exports = function(config) {
-	app.set("save_config", config);
-	const { port } = config;
+module.exports = function(port = 80) {
 	app.listen(port, () => console.log(`SaveServer running on port ${port}!`));
+	app.set("port", port);
 };
-

@@ -1,6 +1,6 @@
 const express = require("express");
 const files = express.Router();
-const { errorCatch, generateFileName, errorGenerator, dest, prettyError, validFile } = require("../util");
+const { errorCatch, generateFileName, errorGenerator, dest, prettyError, validFile, getBase } = require("../util");
 const multer = require("multer");
 const db = require("../util/db");
 const auth = require("../middleware/auth");
@@ -12,7 +12,7 @@ const { isAlphanumeric, isLength, isAscii } = require("validator");
 const storage = multer.diskStorage({
 	destination: dest,
 	filename: async function (req, file, cb) {
-		const tok = generateFileName(6);
+		const tok = await generateFileName(6);
 		file._tok = tok;
 
 		// Extract extension
@@ -94,7 +94,7 @@ files.post("/", upload.array("files", 10), errorCatch(async function (req, res) 
 		for (const file of req.files) {
 			db.addFile(file._tok, file._ext || undefined, req.user.username);
 		}
-		const base = `${req.secure ? "https" : "http"}://${req.hostname}`;
+		const base = getBase(req);
 		res.send({
 			url: `${base}/${req.files[0].filename}`,
 			deletionUrl: `${base}/dashboard`

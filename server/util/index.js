@@ -2,16 +2,21 @@ const { randomBytes } = require("crypto");
 
 const path = require("path");
 const errors = require("./errors");
-const { isEmpty, isAlphanumeric, isLength, isWhitelisted, whitelist } = require("validator");
+const { isEmpty, isAlphanumeric, isLength, isWhitelisted } = require("validator");
+const adminUser = "root";
+const hashRounds = 12;
+
 // Dirty? Absolutely. Works? Yes.
-function generateFileName (number) {
-	number = parseInt(number);
-	let text = "";
-	const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	for (let i = 0; i < number; i++) {
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
-	}
-	return text;
+function generateFileName (len = 6) {
+	return new Promise(function (resolve, reject) {
+		randomBytes(len / 1.1, function (err, buffer) {
+			if (err) {
+				reject(err);
+			}
+			const token = buffer.toString("hex");
+			resolve(token.substr(0, len));
+		});
+	});
 }
 
 const dest = path.join(__dirname, "..", "..", "uploads");
@@ -31,6 +36,8 @@ function generateToken () {
 
 const validTag = (tag) => typeof tag === "string" && !isEmpty(tag) && isAlphanumeric(tag);
 const validFile = (tag) => typeof tag === "string" && !isEmpty(tag) && isWhitelisted(tag, fileWhitelist) && isLength(tag, { min: 6, max: 20 });
+
+const getBase = (req)=> `${req.secure ? "https" : "http"}://${req.get("host")}`;
 module.exports = {
 	generateToken,
 	generateFileName,
@@ -38,5 +45,8 @@ module.exports = {
 	isAlphaNumeric: isAlphanumeric,
 	dest,
 	validTag,
-	validFile
+	validFile,
+	adminUser,
+	hashRounds,
+	getBase
 };

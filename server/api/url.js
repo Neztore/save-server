@@ -1,7 +1,7 @@
 // URL Shortener and fetcher
 const express = require("express");
 const url = express.Router();
-const { errorCatch, errorGenerator, generateFileName, prettyError } = require("../util");
+const { errorCatch, errorGenerator, generateFileName, prettyError, getBase } = require("../util");
 const { isURL, trim, isEmpty, isAlphanumeric } = require("validator");
 const auth = require("../middleware/auth");
 const db = require("../util/db");
@@ -34,9 +34,9 @@ url.post("/", errorCatch(async function (req, res) {
 
 	const url = req.headers["shorten-url"];
 	if (url && typeof url === "string" && isURL(url)) {
-		const tag = generateFileName(6);
+		const tag = await generateFileName(6);
 		await db.addLink(tag, trim(url), req.user.username);
-		res.send({ success: true, url: `${req.secure ? "https" : "http"}://${req.hostname}/u/${tag}` });
+		res.send({ success: true, url: `${getBase(req)}/u/${tag}` });
 	} else {
 		return res.status(400).send(errorGenerator(400, "Bad request: Header \"shorten-url\" must be provided and be a url."));
 	}

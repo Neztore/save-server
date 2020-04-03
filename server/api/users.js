@@ -4,7 +4,7 @@ const express = require("express");
 const users = express.Router();
 const auth = require("../middleware/auth");
 const db = require("../util/db");
-const { errorGenerator, errorCatch, generateToken, errors, dest } = require("../util");
+const { errorGenerator, errorCatch, generateToken, errors, dest, hashRounds, adminUser, getBase} = require("../util");
 const { isLength, isAlphanumeric, isEmpty } = require("validator");
 const { compare, hash } = require("bcrypt");
 const fs = require("fs");
@@ -81,7 +81,7 @@ users.post("/create", errorCatch(async function (req, res) {
 		if (user) {
 			return res.status(404).send(errorGenerator(400, "Username is already in use."));
 		} else {
-			const hashed = await hash(password, req.config.hashRounds);
+			const hashed = await hash(password, hashRounds);
 			await db.addUser(username, hashed);
 			res.send({ success: true, username });
 		}
@@ -104,7 +104,7 @@ users.use("/:id/", async function (req, res, next) {
 				if (user) {
 					req.target = user;
 
-					if (user.username === req.config.adminUser) {
+					if (user.username === adminUser) {
 						user.isAdmin = true;
 					}
 					if (req.target.username !== req.user.username) {
@@ -154,7 +154,7 @@ users.delete("/:id", errorCatch(async function (req, res, next) {
 				}
 			});
 		} else {
-			await db.setFilesOwner(req.target.username, req.config.adminUser);
+			await db.setFilesOwner(req.target.username, adminUser);
 		}
 	}
 
@@ -166,7 +166,7 @@ users.delete("/:id", errorCatch(async function (req, res, next) {
 users.get("/:id/config", function (req, res) {
 	// Generate config
 	const isLink = req.query.link && req.query.link === "true";
-	const urlBase = `${req.secure ? "https" : "http"}://${req.hostname}/api`;
+	const urlBase = `${getBase(req)}/api`;
 	const config = {
 		Version: "12.4.1",
 		Headers: {
@@ -216,7 +216,7 @@ users.patch("/:id/password", errorCatch(async function (req, res) {
 			}
 		}
 		// they are good - either admin or provided correct pass.
-		const hashed = await hash(newPassword, req.config.hashRounds);
+		const hashed = await hash(newPassword, hashRounds);
 		await db.setPassword(req.target.username, hashed);
 		return res.send({ success: true, updatedUser: req.target.username });
 	} else {
@@ -241,7 +241,7 @@ users.patch("/:id/token", errorCatch(async function (req, res) {
 }));
 
 users.get("/:id/files", errorCatch(async function (req, res) {
-	const files = await db.getFiles(req.target.username);
+	const files = await db.getUserFiles(req.target.username);
 	res.send({ success: true, files });
 }));
 

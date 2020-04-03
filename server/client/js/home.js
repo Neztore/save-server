@@ -518,7 +518,19 @@ window.addEventListener("DOMContentLoaded", function () {
 		
 
 	})();
-	
+	(function configButtons() {
+		const uploadConfig = document.getElementById("download-upload-config");
+		const linkConfig = document.getElementById("download-link-config");
+		uploadConfig.onclick = function () {
+			const target = getTarget();
+			window.location = `/api/users/${target}/config`;
+		};
+
+		linkConfig.onclick = function () {
+			const target = getTarget();
+			window.location = `/api/users/${target}/config?link=true`;
+		};
+	})();
 	(function passwordReset () {
 		// Password reset
 		const form = document.getElementById("password-change-form");
