@@ -9,7 +9,7 @@ const hashRounds = 12;
 // Dirty? Absolutely. Works? Yes.
 function generateFileName (len = 6) {
 	return new Promise(function (resolve, reject) {
-		randomBytes(len / 1.1, function (err, buffer) {
+		randomBytes(len, function (err, buffer) {
 			if (err) {
 				reject(err);
 			}
