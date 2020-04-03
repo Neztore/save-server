@@ -1,7 +1,7 @@
 {
-  "name": "sharex-host",
+  "name": "save-server",
   "version": "1.0.0",
-  "description": "A simple express based image host for ShareX",
+  "description": "A ShareX server built on Express, Bulma and PostgreSQl with User support.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

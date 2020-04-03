@@ -144,10 +144,11 @@
                 </div>
                 <div class="level-right">
                     <div class="level-item">
-                        <button class="button is-success">Create user</button>
+                        <button class="button is-success" id="create-user">Create user</button>
                     </div>
                 </div>
             </nav>
+
             <div class="box">
                 <h2 class="is-size-5">Username: <span class="has-text-weight-semibold"  id="settings-username">root</span></h2>
                 <p>Use these buttons to download the configurations files for ShareX. You then need to select them under "Custom destinations".</p>
@@ -213,6 +214,48 @@
                     <button class="button is-danger" id="delete-all">Delete user and all content</button>
                     <button class="button" id="delete-user">Delete user</button>
                 </div>
+
+            </div>
+
+        </div>
+        <!-- user creation: A "Special" section. -->
+        <div id="create-user-area">
+            <h1 class="title">Create user</h1>
+            <div class="notification" id="trust">
+                This should be someone you trust - they will be able to upload files to your server. You can set their username and password, and give them their config file, or tell them to login <a href="/login" target="_blank">here</a> and get this information themselves.
+            </div>
+            <div class="columns is-centered">
+                <div class="column is-4">
+                    <div class="box">
+                        <form class="form control" id="create-user-form">
+                            <div class="notification is-danger is-light" id="create-user-error" hidden></div>
+                            <div class="field">
+                                <label class="label" for="create-username">Username</label>
+                                <div class="control">
+                                    <input class="input" type="text" placeholder="JohnDoe" name="username" id="create-username" min="2" required>
+                                    <p class="help">This should be unique.</p>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label" for="create-password">Password</label>
+                                <div class="control">
+                                    <input class="input" type="password" placeholder="Your password" name="password" id="create-password" min="6" required>
+                                    <p class="help">This should be more than 6 characters and complex.</p>
+                                </div>
+                                <div class="control">
+                                    <label class="checkbox">
+                                        <input type="checkbox" id="create-show-pass">
+                                        Show password
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="button is-primary" id="create-user-submit">Create user</button>
+                        </form>
+                    </div>
+                </div>
+
+
+
 
             </div>
 
