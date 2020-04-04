@@ -163,14 +163,19 @@ users.delete("/:id", errorCatch(async function (req, res, next) {
 	res.send({ success: true, message: "User deleted." });
 }));
 
-users.get("/:id/config", function (req, res) {
+users.get("/:id/config", errorCatch(async function (req, res) {
 	// Generate config
 	const isLink = req.query.link && req.query.link === "true";
 	const urlBase = `${getBase(req)}/api`;
+	let token = req.target.token;
+	if (!token) {
+		token = await generateToken();
+		await db.setToken(req.target.username, token);
+	}
 	const config = {
 		Version: "12.4.1",
 		Headers: {
-			Authorization: req.target.token
+			Authorization: token
 		},
 		RequestMethod: "POST",
 		URL: "$json:url$",
@@ -194,7 +199,7 @@ users.get("/:id/config", function (req, res) {
 	res.setHeader("content-type", "application/sxcu");
 	const stringified = JSON.stringify(config, null, "\t");
 	res.send(stringified);
-});
+}));
 
 users.patch("/:id/password", errorCatch(async function (req, res) {
 	// ID being @me or an ID.
