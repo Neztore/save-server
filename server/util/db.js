@@ -123,7 +123,7 @@ class Database extends sqlite.Database {
 		return this.getOne(SQL, [username]);
 	}
 	async getUserFiles (username) {
-		const SQL = "SELECT * from files WHERE owner = $1;";
+		const SQL = "SELECT datetime(created,'unixepoch') as created, id, owner, extension FROM files WHERE owner = $1;";
 		return this.getLots(SQL, [username]);
 	}
 	getUserByToken (token) {
