@@ -1,4 +1,4 @@
-![Banner](https://raw.githubusercontent.com/Neztore/save-server/master/banner.png)
+![Banner](https://i.imgur.com/3u9rTNm.png)
 # save-server
 Save-Server is a server for the [ShareX](https://getsharex.com/) tool built on [NodeJS](https://nodejs.org/en/), [Bulma](https://bulma.io) and [SQLite](https://sqlite.org/).
 
