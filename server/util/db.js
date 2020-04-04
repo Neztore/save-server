@@ -106,12 +106,12 @@ class Database extends sqlite.Database {
 		return this.getOne(SQL, [id]);
 	}
 	getFiles () {
-		const SQL = "SELECT * from files ORDER BY created DESC;";
+		const SQL = "SELECT datetime(created,'unixepoch') as created, id, owner, extension FROM files ORDER BY created DESC;";
 		return this.getLots(SQL);
 
 	}
 	getLinks (username) {
-		const SQL = "SELECT * from links WHERE links.owner = $1 ORDER BY created DESC LIMIT 600;";
+		const SQL = "SELECT datetime(created,'unixepoch') as created, id, url, owner FROM links WHERE links.owner = $1 ORDER BY created DESC LIMIT 600;";
 		return this.getLots(SQL, [username]);
 	}
 	getUsers () {
