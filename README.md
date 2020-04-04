@@ -12,6 +12,8 @@ Another interesting feature is that it fetches files based purely on their name 
 - Markdown and code rendering, with syntax highlighting
 - Flexible extensions (Files are identified by the name, extension is ignored)
 
+Demo/Example (My instance): [https://i.nezto.re](https://i.nezto.re).
+
 ## Setting up
 ### Prerequisites
 Before setting up save-server, you should:
