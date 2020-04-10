@@ -1,4 +1,4 @@
-const sqlite = require("sqlite3").verbose();
+const sqlite = require("sqlite3");
 const { join } = require("path");
 const { adminUser, hashRounds, dest } = require("./index");
 const { hash } = require("bcrypt");
