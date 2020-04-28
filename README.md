@@ -98,6 +98,11 @@ Each user is allocated a token. This token is used both to authenticate ShareX u
 The SQLite database is included here for ease, but the root user is created at run time if it is not detected. You can find the SQL statements to create the statement tables should you wish to, for whatever reason, in `create.sql`.  
 
 You can manually explore the SQLite data using a variety of tools, my favourite of which is the [SQLite browser](https://sqlitebrowser.org/).
+
+#### A note on passwords
+We use Bcrypt to hash passwords. This is timing attack-safe, but this algorithm only makes use of the first **72** bytes of your password.
+The server will not accept passwords longer than 100 characters, and a warning will be displayed - but be aware of this! Encoding dependent, 72 bytes is *roughly* equal to 72 characters.
+
 ### Getting help
 To get help setting this up, or if you encounter any issues you can:
 1. Open an issue in the [Issues](https://github.com/Neztore/Save-Server) section of the GitHub repository.
