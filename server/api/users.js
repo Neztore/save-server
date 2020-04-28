@@ -11,13 +11,13 @@ const fs = require("fs");
 const path = require("path");
 
 const validUsername = (str) => str && typeof str === "string" && isLength(str, { min: 3, max: 50 }) && isAlphanumeric(str);
-const validPassword = (str) => str && typeof str === "string" && isLength(str, { min: 3, max: 50 });
+const validPassword = (str) => str && typeof str === "string" && isLength(str, { min: 3, max: 100 });
 users.post("/login", errorCatch(async function (req, res) {
 	const username = req.body.username;
 	const password = req.body.password;
 	if (validUsername(username)) {
 		if (!validPassword(password)) {
-			return res.status(400).send(errorGenerator(400, "Invalid password."));
+			return res.status(400).send(errorGenerator(400, "Invalid password: Must be less than 100 characters."));
 		}
 
 		// It passes all checks

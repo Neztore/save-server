@@ -479,7 +479,7 @@ window.addEventListener("DOMContentLoaded", function () {
 				return showError("Password must be filled out and be more than 3 characters.");
 			}
 			if (password.length > 50) {
-				return showError("Password cannot be more than 50 characters... that's secure enough!");
+				return showError("Password cannot be more than 100 characters. Bcrypt only makes use of the first 72 bytes.");
 			}
 			submitButton.classList.add("is-loading");
 			Api.post("/users/create", {
