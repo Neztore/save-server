@@ -1,13 +1,19 @@
 {
   "name": "save-server",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A ShareX server built on Express, Bulma and SQLite with User support.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ."
   },
-  "keywords": ["sharex", "server", "image server", "image host", "save-server"],
+  "keywords": [
+    "sharex",
+    "server",
+    "image server",
+    "image host",
+    "save-server"
+  ],
   "author": "Neztore",
   "license": "MIT",
   "dependencies": {

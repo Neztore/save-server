@@ -155,9 +155,11 @@ class Database extends sqlite.Database {
 		const SQL = "DELETE FROM links WHERE id = $1";
 		return this.query(SQL, [id]);
 	}
-	removeUser (username) {
+	async removeUser (username) {
 		const SQL = "DELETE FROM users WHERE username = $1";
-		return this.query(SQL, [username]);
+		await this.query(SQL, [username]);
+		const removeFilesSQL = "DELETE FROM FILES where owner = $1";
+		return this.query(removeFilesSQL, [username]);
 	}
 
 	setPassword (username, password) {
