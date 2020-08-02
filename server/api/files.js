@@ -4,6 +4,7 @@ const { errorCatch, generateFileName, errorGenerator, dest, prettyError, validFi
 const multer = require("multer");
 const db = require("../util/db");
 const auth = require("../middleware/auth");
+const csrf = require("../middleware/csrf");
 const fs = require("fs");
 const path = require("path");
 const { isAlphanumeric, isLength, isAscii } = require("validator");
@@ -83,7 +84,7 @@ async function getFile (req, res, next) {
 }
 files.get("/:id", errorCatch(getFile));
 
-files.use(auth);
+files.use(auth.header);
 
 // Supports uploading multiple files, even though ShareX doesn't.
 files.post("/", upload.array("files", 10), errorCatch(async function (req, res) {
@@ -104,7 +105,7 @@ files.post("/", upload.array("files", 10), errorCatch(async function (req, res) 
 		res.status(400).send(errorGenerator(400, "No file upload detected!"));
 	}
 }));
-
+files.use(csrf);
 files.delete("/:id", errorCatch(async function (req, res, next) {
 	if (req.params.id && validFile(req.params.id)) {
 		const without = removeExt(req.params.id);

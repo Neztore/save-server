@@ -3,8 +3,8 @@ const { errors, adminUser } = require("../util");
 const db = require("../util/db");
 const { isLength, isAscii } = require("validator");
 
-async function checkToken (req) {
-	let authorization = req.headers.authorization ? req.headers.authorization : req.cookies.authorization;
+async function checkToken (req, useCookie) {
+	let authorization = useCookie ? req.cookies.authorization : req.headers.authorization;
 	if (!authorization || !isAscii(authorization)) {
 		return false;
 	} else {
@@ -29,8 +29,10 @@ async function checkToken (req) {
 		}
 	}
 }
+
+// Defaults to cookie
 module.exports = async function checkAuth (req, res, next) {
-	if (await checkToken(req)) {
+	if (await checkToken(req, true)) {
 		next();
 	} else {
 		res.status(errors.unauthorized.error.status);
@@ -39,6 +41,14 @@ module.exports = async function checkAuth (req, res, next) {
 };
 // Redirect version
 module.exports.redirect = async function checkAuth (req, res, next) {
+	if (await checkToken(req, true)) {
+		next();
+	} else {
+		res.redirect("/login");
+	}
+};
+
+module.exports.header = async function checkAuth (req, res, next) {
 	if (await checkToken(req)) {
 		next();
 	} else {
