@@ -7,6 +7,7 @@ const files = require("./api/files");
 const users = require("./api/users");
 const links = require("./api/url");
 const auth = require("./middleware/auth");
+const csrf = require("./middleware/csrf");
 
 const { errorHandler } = require("./util");
 const bodyParser = require("body-parser");
@@ -20,6 +21,7 @@ app.set("view engine", "ejs");
 app.enable("trust proxy");
 app.use(bodyParser.json());
 app.use(cookie());
+app.use(csrf)
 app.set("x-powered-by", "false");
 
 

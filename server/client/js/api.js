@@ -14,13 +14,6 @@ Api.post = function (url, options) {
 		if (!options) options = {};
 		options.method = "POST";
 
-		// POST Body processing
-		if (options.body && typeof options.body !== "string") {
-			options.body = JSON.stringify(options.body);
-			if (!options.headers) options.headers = {};
-			options.headers["Content-Type"] = "application/json";
-		}
-
 		return this._makeRequest(url, options);
 	} catch (e) {
 		console.error(e);
@@ -31,13 +24,6 @@ Api.patch = function (url, options) {
 	try {
 		if (!options) options = {};
 		options.method = "PATCH";
-
-		// PATCH Body processing
-		if (options.body && typeof options.body !== "string") {
-			options.body = JSON.stringify(options.body);
-			if (!options.headers) options.headers = {};
-			options.headers["Content-Type"] = "application/json";
-		}
 
 		return this._makeRequest(url, options);
 	} catch (e) {
@@ -55,11 +41,20 @@ Api.delete = function (url, options) {
 		console.error(e);
 	}
 };
-
+const protectedMethods = ["post", "patch", "delete", "put"]
 Api._makeRequest = async function (url, options) {
 	const startChar = url.substr(0, 1);
 	options.credentials = "include";
+	if (!options.headers) options.headers = {};
 
+	if (options.body && typeof options.body !== "string") {
+		options.body = JSON.stringify(options.body);
+		options.headers["Content-Type"] = "application/json";
+	}
+
+	if (protectedMethods.includes(options.method.toLowerCase())) {
+		options.headers["CSRF-Token"] = getCookie("CSRF-Token");
+	}
 	url = (startChar === "/") ? `${ApiUrl}${url}` : `/${url}`;
 	const req = await fetch(url, options);
 	return await req.json();
