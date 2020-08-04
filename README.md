@@ -1,5 +1,8 @@
 ![Banner](https://i.imgur.com/3u9rTNm.png)
+
 # save-server
+<a href="https://npmjs.org/package/save-server" title="View this project on NPM" rel="nofollow"><img src="https://img.shields.io/npm/v/save-server.svg" alt="NPM version"></a>
+
 Save-Server is a server for the [ShareX](https://getsharex.com/) tool built on [NodeJS](https://nodejs.org/en/), [Bulma](https://bulma.io) and [SQLite](https://sqlite.org/).
 
 It is a little more heavy duty than other versions as it uses SQLite, allowing for "users" and for files to be filtered by owner, which is something I wanted.

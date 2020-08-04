@@ -7,6 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ."
   },
+  "bugs": "https://github.com/neztore/save-server/issues",
+  "homepage": "https://github.com/neztore/save-server#readme",
+  "repository": "github:neztore/save-server",
   "keywords": [
     "sharex",
     "server",
@@ -14,7 +17,7 @@
     "image host",
     "save-server"
   ],
-  "author": "Neztore",
+  "author": "Neztore <hi@nezto.re> (https://nezto.re)",
   "license": "MIT",
   "dependencies": {
     "bcrypt": "^4.0.1",
