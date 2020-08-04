@@ -2,8 +2,9 @@
     background-color: #282c34;
 
 }
-.warp-content {
+body code.warp-content {
     white-space: pre-wrap;
+    padding-left: 1.5rem;
 }
 
 #markdownRender h1 {
