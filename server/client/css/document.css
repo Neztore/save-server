@@ -4,7 +4,6 @@
 }
 .warp-content {
     white-space: pre-wrap;
-    word-wrap: break-word;
 }
 
 #markdownRender h1 {

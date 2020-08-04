@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 		markRender.innerHTML = marked(markRender.innerHTML);
 	}
 
-	document.querySelectorAll("pre code").forEach((block) => {
+	document.querySelectorAll("code").forEach((block) => {
 		hljs.highlightBlock(block);
 	});
 });
