@@ -1,6 +1,6 @@
 {
   "name": "save-server",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A ShareX server built on Express, Bulma and SQLite with User support.",
   "main": "index.js",
   "scripts": {
