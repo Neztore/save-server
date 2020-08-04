@@ -35,8 +35,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
 		markRender.innerHTML = marked(markRender.innerHTML);
 	}
+	hljs.configure({
+		tabReplace: "    ", // 4 spaces
+	});
 
-	document.querySelectorAll("pre code").forEach((block) => {
+	document.querySelectorAll("code").forEach((block) => {
 		hljs.highlightBlock(block);
 	});
 });
