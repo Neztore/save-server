@@ -22,10 +22,7 @@ url.get("/:tag", errorCatch(async function (req, res, next) {
 		res.status(400).send(prettyError(400, "Invalid short URL tag."));
 	}
 }));
-
-url.use("/", auth.redirect);
-
-
+url.use(auth);
 // Add new URL Shortening
 url.post("/", errorCatch(async function (req, res) {
 	if (!req.user) {
@@ -42,7 +39,6 @@ url.post("/", errorCatch(async function (req, res) {
 	}
 }));
 
-url.use(auth);
 // This is an API request, so it returns JSON.
 url.delete("/:tag", errorCatch(async function (req, res) {
 	const { tag } = req.params;

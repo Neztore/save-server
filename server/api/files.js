@@ -84,10 +84,8 @@ async function getFile (req, res, next) {
 }
 files.get("/:id", errorCatch(getFile));
 
-files.use(auth.header);
-
 // Supports uploading multiple files, even though ShareX doesn't.
-files.post("/", upload.array("files", 10), errorCatch(async function (req, res) {
+files.post("/", auth.header, upload.array("files", 10), errorCatch(async function (req, res) {
 	if (!req.user) {
 		return console.log("what??");
 	}
@@ -106,6 +104,7 @@ files.post("/", upload.array("files", 10), errorCatch(async function (req, res) 
 	}
 }));
 files.use(csrf);
+files.use(auth);
 files.delete("/:id", errorCatch(async function (req, res, next) {
 	if (req.params.id && validFile(req.params.id)) {
 		const without = removeExt(req.params.id);
