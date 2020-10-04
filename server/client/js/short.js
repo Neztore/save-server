@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
 	const fields = {
-		target: document.getElementById("target")
+		target: document.getElementById("target"),
+		uri: document.getElementById("uri")
 	};
 	const form = document.getElementsByClassName("form")[0];
 
@@ -11,6 +12,9 @@ document.addEventListener("DOMContentLoaded", function () {
 			const res = await Api.post("/links/", {
 				headers: {
 					"shorten-url": targetUrl
+				},
+				body: {
+					tag: fields.uri.value || undefined
 				}
 			});
 			if (res.error) {

@@ -31,12 +31,21 @@ url.post("/", errorCatch(async function (req, res) {
 
 	const url = req.headers["shorten-url"];
 	if (url && typeof url === "string" && isURL(url)) {
-		const tag = await generateFileName(6);
+		// Validate tag
+		const providedTag = req.body.tag;
+
+		const isValid = providedTag && validTag(providedTag) && providedTag.length < 20 && providedTag.length > 2;
+		// Check for in use
+		const inUse = await db.getLink(providedTag);
+
+		const tag = (isValid && !inUse) ? providedTag : await generateFileName(6);
 		await db.addLink(tag, trim(url), req.user.username);
 		res.send({ success: true, url: `${getBase(req)}/u/${tag}` });
 	} else {
 		return res.status(400).send(errorGenerator(400, "Bad request: Header \"shorten-url\" must be provided and be a url."));
 	}
+
+
 }));
 
 // This is an API request, so it returns JSON.
@@ -45,7 +54,7 @@ url.delete("/:tag", errorCatch(async function (req, res) {
 	if (validTag(tag)) {
 		const link = await db.getLink(tag);
 		if (link) {
-			if (link.username !== req.user.username) {
+			if (link.owner !== req.user.username) {
 				if (!req.user.isAdmin) {
 					return res.status(403).send(errorGenerator(403, "You are not allowed to delete that link."));
 				}
