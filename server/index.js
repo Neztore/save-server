@@ -49,9 +49,9 @@ app.get("/", (req, res) => {
 	});});
 app.get("/login", (req, res) => res.render(getLoc("login")));
 
-app.get('/logout', (req, res) => {
-	res.clearCookie('CSRF-Token');
-	res.clearCookie('authorization');
+app.get("/logout", (req, res) => {
+	res.clearCookie("CSRF-Token");
+	res.clearCookie("authorization");
 	res.redirect('/');
 });
 

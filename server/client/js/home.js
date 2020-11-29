@@ -518,15 +518,13 @@ window.addEventListener("DOMContentLoaded", function () {
 		
 
 	})();
-
 	(function logout() {
 		const logoutButton = document.getElementById("logout");
 
 		logoutButton.onclick = function () {
-			window.location = `/logout`
-		}
+			window.location = "/logout"
+		};
 	}) ();
-
 	(function configButtons() {
 		const uploadConfig = document.getElementById("download-upload-config");
 		const linkConfig = document.getElementById("download-link-config");
