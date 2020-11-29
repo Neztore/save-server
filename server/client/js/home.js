@@ -522,7 +522,7 @@ window.addEventListener("DOMContentLoaded", function () {
 		const logoutButton = document.getElementById("logout");
 
 		logoutButton.onclick = function () {
-			window.location = "/logout"
+			window.location = "/logout";
 		};
 	}) ();
 	(function configButtons() {

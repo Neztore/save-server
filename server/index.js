@@ -52,7 +52,7 @@ app.get("/login", (req, res) => res.render(getLoc("login")));
 app.get("/logout", (req, res) => {
 	res.clearCookie("CSRF-Token");
 	res.clearCookie("authorization");
-	res.redirect('/');
+	res.redirect("/");
 });
 
 app.use("/dashboard", auth.redirect);
