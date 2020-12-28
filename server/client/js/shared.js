@@ -40,7 +40,7 @@ function deleteFile (fileInfo, cb) {
 	const sure = confirm(`Are you sure you want to delete ${str}?`);
 	if (sure) {
 		// Delete the file
-		Api.delete(`/files/${fileInfo.id}`)
+		window.Api.delete(`/files/${fileInfo.id}`)
 			.then((res) => {
 				if (res.success) {
 					if (cb) cb(true);
@@ -55,6 +55,20 @@ function deleteFile (fileInfo, cb) {
 		if (cb) cb();
 	}
 }
+window.deleteFile = deleteFile;
+
+function logout () {
+	window.Api.post("/users/@me/logout")
+		.then((res) => {
+			if (res.success) {
+				document.location.href = "/";
+			} else {
+				showError(res.error);
+			}
+		})
+		.catch(showError);
+}
+window.logout = logout;
 
 // We create dynamically because it's easier than ensuring the HTML code exists on every page.
 function showMessage (headerContent, content, colour, closeAfter, closeCb) {
@@ -121,8 +135,9 @@ function showError (error) {
 function getCookie(name) {
 	const value = `; ${document.cookie}`;
 	const parts = value.split(`; ${name}=`);
-	if (parts.length === 2) return parts.pop().split(';').shift();
+	if (parts.length === 2) return parts.pop().split(";").shift();
 }
+window.getCookie = getCookie;
 
 document.addEventListener("DOMContentLoaded", () => {
 	// Get all "navbar-burger" elements

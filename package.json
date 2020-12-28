@@ -1,10 +1,10 @@
 {
   "name": "save-server",
-  "version": "1.1.0",
-  "description": "A ShareX server built on Express, Bulma and SQLite with User support.",
+  "version": "1.2.0",
+  "description": "A powerful ShareX image and URL server, with support for multiple users.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "eslint index.js server/",
     "start": "node ."
   },
   "bugs": "https://github.com/neztore/save-server/issues",
@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.3",
-    "@types/multer": "^1.4.2"
+    "@types/multer": "^1.4.2",
+    "eslint": "^7.16.0"
   }
 }

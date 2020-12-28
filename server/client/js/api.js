@@ -41,7 +41,7 @@ Api.delete = function (url, options) {
 		console.error(e);
 	}
 };
-const protectedMethods = ["post", "patch", "delete", "put"]
+const protectedMethods = ["post", "patch", "delete", "put"];
 Api._makeRequest = async function (url, options) {
 	const startChar = url.substr(0, 1);
 	options.credentials = "include";
@@ -53,7 +53,7 @@ Api._makeRequest = async function (url, options) {
 	}
 
 	if (protectedMethods.includes(options.method.toLowerCase())) {
-		options.headers["CSRF-Token"] = getCookie("CSRF-Token");
+		options.headers["CSRF-Token"] = window.getCookie("CSRF-Token");
 	}
 	url = (startChar === "/") ? `${ApiUrl}${url}` : `/${url}`;
 	const req = await fetch(url, options);

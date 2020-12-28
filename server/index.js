@@ -21,7 +21,7 @@ app.set("view engine", "ejs");
 app.enable("trust proxy");
 app.use(bodyParser.json());
 app.use(cookie());
-app.set("x-powered-by", "false");
+app.set("x-powered-by", false);
 
 
 // Client
@@ -33,9 +33,10 @@ app.use("/favicon.ico", express.static(path.join(client, "favicon.ico")));
 
 // Routes
 app.use("/api/files", files.router);
-app.use(csrf)
-app.use("/api/users", users);
 app.use("/api/links", links);
+
+app.use(csrf);
+app.use("/api/users", users);
 app.use("/api/links", links);
 app.use("/u", links);
 

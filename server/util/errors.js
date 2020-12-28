@@ -3,6 +3,7 @@ const ejs = require("ejs");
 const path = require("path");
 
 // "Unfriendly" error messages.
+// eslint-disable-next-line no-unused-vars
 function errorHandler (error, req, res, _next) {
 	if (error instanceof SyntaxError) {
 		res.status(400).send(errorGenerator(400, "Bad JSON."));
