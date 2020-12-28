@@ -89,7 +89,7 @@ files.post("/", auth.header, upload.array("files", 10), errorCatch(async functio
 	if (!req.user) {
 		return console.log("what??");
 	}
-	if (req.files.length !== 0) {
+	if (req.files && req.files.length !== 0) {
 		for (const file of req.files) {
 			db.addFile(file._tok, file._ext || undefined, req.user.username);
 		}

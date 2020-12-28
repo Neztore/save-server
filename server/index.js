@@ -21,7 +21,7 @@ app.set("view engine", "ejs");
 app.enable("trust proxy");
 app.use(bodyParser.json());
 app.use(cookie());
-app.set("x-powered-by", "false");
+app.set("x-powered-by", false);
 
 
 // Client
