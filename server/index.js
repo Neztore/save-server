@@ -33,9 +33,10 @@ app.use("/favicon.ico", express.static(path.join(client, "favicon.ico")));
 
 // Routes
 app.use("/api/files", files.router);
-app.use(csrf)
-app.use("/api/users", users);
 app.use("/api/links", links);
+
+app.use(csrf);
+app.use("/api/users", users);
 app.use("/api/links", links);
 app.use("/u", links);
 

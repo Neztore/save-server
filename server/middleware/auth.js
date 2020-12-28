@@ -5,7 +5,7 @@ const { isLength, isAscii } = require("validator");
 
 async function checkToken (req, useCookie) {
 	let authorization = useCookie ? req.cookies.authorization : req.headers.authorization;
-	if (!authorization || !isAscii(authorization)) {
+	if (!authorization || typeof authorization !== "string" || !isAscii(authorization)) {
 		return false;
 	} else {
 		authorization = decodeURIComponent(authorization);
@@ -52,6 +52,7 @@ module.exports.header = async function checkAuth (req, res, next) {
 	if (await checkToken(req)) {
 		next();
 	} else {
-		res.redirect("/login");
+		res.status(errors.unauthorized.error.status);
+		return res.send(errors.unauthorized);
 	}
 };

@@ -127,6 +127,10 @@ class Database extends sqlite.Database {
 		return this.getLots(SQL, [username]);
 	}
 	getUserByToken (token) {
+		// Just to double check, ensure token is defined.
+		if (!token || typeof  token !== "string") {
+			throw new Error("Illegal authorisation token!");
+		}
 		const SQL = "SELECT username, token FROM users WHERE token = $1 LIMIT 1;";
 		return this.getOne(SQL, [token]);
 	}

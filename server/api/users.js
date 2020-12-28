@@ -4,7 +4,7 @@ const express = require("express");
 const users = express.Router();
 const auth = require("../middleware/auth");
 const db = require("../util/db");
-const { errorGenerator, errorCatch, generateToken, errors, dest, hashRounds, adminUser, getBase} = require("../util");
+const { errorGenerator, errorCatch, generateToken, errors, dest, hashRounds, adminUser, getBase } = require("../util");
 const { isLength, isAlphanumeric, isEmpty } = require("validator");
 const { compare, hash } = require("bcrypt");
 const fs = require("fs");
@@ -31,7 +31,8 @@ users.post("/login", errorCatch(async function (req, res) {
 						httpOnly: true,
 						/* A week */
 						expires: new Date(Date.now() + 604800000),
-						secure: req.secure || false
+						secure: req.secure || false,
+						sameSite: "Lax"
 					});
 					return res.send({ success: true, message: "Logged in." });
 				} else {
@@ -42,7 +43,8 @@ users.post("/login", errorCatch(async function (req, res) {
 						httpOnly: true,
 						/* A week */
 						expires: new Date(Date.now() + 604800000),
-						secure: req.secure || false
+						secure: req.secure || false,
+						sameSite: "Lax"
 					});
 					return res.send({ success: true, message: "Logged in." });
 				}
@@ -163,6 +165,7 @@ users.delete("/:id", errorCatch(async function (req, res, next) {
 	res.send({ success: true, message: "User deleted." });
 }));
 
+
 users.get("/:id/config", errorCatch(async function (req, res) {
 	// Generate config
 	const isLink = req.query.link && req.query.link === "true";
@@ -239,10 +242,26 @@ users.patch("/:id/token", errorCatch(async function (req, res) {
 			httpOnly: true,
 			/* A week */
 			expires: new Date(Date.now() + 604800000),
-			secure: req.secure || false
+			secure: req.secure || false,
+			sameSite: "Lax"
 		});
 	}
 	return res.send({ success: true, token: newToken });
+}));
+
+
+users.post("/:id/logout", errorCatch(async function (req, res) {
+	await db.expireToken(req.target.username);
+	if (req.user.username === req.target.username) {
+		res.cookie("authorization", "", {
+			httpOnly: true,
+			/* Expired */
+			expires: new Date(Date.now() - 604800000),
+			secure: req.secure || false,
+			sameSite: "Lax"
+		});
+	}
+	return res.send({ success: true });
 }));
 
 users.get("/:id/files", errorCatch(async function (req, res) {

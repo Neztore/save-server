@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		const username = fields.username.value;
 		const password = fields.password.value;
 		if (username && password && username !== "" && password !== "") {
-			const res = await Api.post("/users/login", {
+			const res = await window.Api.post("/users/login", {
 				body: {
 					username,
 					password

@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		e.preventDefault();
 		const targetUrl = fields.target.value;
 		if (targetUrl && targetUrl !== "") {
-			const res = await Api.post("/links/", {
+			const res = await window.Api.post("/links/web", {
 				headers: {
 					"shorten-url": targetUrl
 				},

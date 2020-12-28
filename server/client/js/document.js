@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", (event) => {
+document.addEventListener("DOMContentLoaded", () => {
 	const showRender = document.getElementById("show-render");
 	const showCode = document.getElementById("show-code");
 	const markRender = document.getElementById("markdown-render");
@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 	if (deleteButton) {
 		deleteButton.onclick = function () {
 			deleteButton.classList.add("is-loading");
-			deleteFile({ id: fileName }, function (deleted) {
+			window.deleteFile({ id: window.fileName }, function (deleted) {
 				deleteButton.classList.remove("is-loading");
 				if (deleted) {
 					document.location = "/dashboard";
@@ -33,13 +33,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
 			code.classList.remove("hidden");
 		};
 
-		markRender.innerHTML = marked(markRender.innerHTML);
+		markRender.innerHTML = window.marked(markRender.innerHTML);
 	}
-	hljs.configure({
+	window.hljs.configure({
 		tabReplace: "    ", // 4 spaces
 	});
 
 	document.querySelectorAll("code").forEach((block) => {
-		hljs.highlightBlock(block);
+		window.hljs.highlightBlock(block);
 	});
 });

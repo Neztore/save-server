@@ -5,6 +5,7 @@ const { errorCatch, errorGenerator, generateFileName, prettyError, getBase } = r
 const { isURL, trim, isEmpty, isAlphanumeric } = require("validator");
 const auth = require("../middleware/auth");
 const db = require("../util/db");
+const csrf = require("../middleware/csrf");
 
 const validTag = (tag) => typeof tag === "string" && !isEmpty(tag) && isAlphanumeric(tag);
 
@@ -22,9 +23,9 @@ url.get("/:tag", errorCatch(async function (req, res, next) {
 		res.status(400).send(prettyError(400, "Invalid short URL tag."));
 	}
 }));
-url.use(auth);
-// Add new URL Shortening
-url.post("/", errorCatch(async function (req, res) {
+
+
+async function processAddLink (req, res) {
 	if (!req.user) {
 		throw new Error("no user...?");
 	}
@@ -44,12 +45,41 @@ url.post("/", errorCatch(async function (req, res) {
 	} else {
 		return res.status(400).send(errorGenerator(400, "Bad request: Header \"shorten-url\" must be provided and be a url."));
 	}
+}
 
+// For the ShareX client
+url.post("/", auth.header, errorCatch(processAddLink));
 
+// Web routes (Auth + CSRF protection)
+url.use(auth);
+url.use(csrf);
+
+// Add new URL Shortening
+url.post("/web", errorCatch(async function (req, res) {
+	if (!req.user) {
+		throw new Error("no user...?");
+	}
+
+	const url = req.headers["shorten-url"];
+	if (url && typeof url === "string" && isURL(url)) {
+		// Validate tag
+		const providedTag = req.body.tag;
+
+		const isValid = providedTag && validTag(providedTag) && providedTag.length < 20 && providedTag.length > 2;
+		// Check for in use
+		const inUse = await db.getLink(providedTag);
+
+		const tag = (isValid && !inUse) ? providedTag : await generateFileName(6);
+		await db.addLink(tag, trim(url), req.user.username);
+		res.send({ success: true, url: `${getBase(req)}/u/${tag}` });
+	} else {
+		return res.status(400).send(errorGenerator(400, "Bad request: Header \"shorten-url\" must be provided and be a url."));
+	}
 }));
 
+
 // This is an API request, so it returns JSON.
-url.delete("/:tag", errorCatch(async function (req, res) {
+url.delete("/:tag", auth, errorCatch(async function (req, res) {
 	const { tag } = req.params;
 	if (validTag(tag)) {
 		const link = await db.getLink(tag);
