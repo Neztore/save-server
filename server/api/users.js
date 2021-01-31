@@ -251,7 +251,6 @@ users.patch("/:id/token", errorCatch(async function (req, res) {
 
 
 users.post("/:id/logout", errorCatch(async function (req, res) {
-	await db.expireToken(req.target.username);
 	if (req.user.username === req.target.username) {
 		res.cookie("authorization", "", {
 			httpOnly: true,
