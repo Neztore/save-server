@@ -46,7 +46,8 @@ $ npm install save-server
 
 ### 2: Running and configuring the server
 The only configuration value that needs to be passed is the port which the application should run on. By default, it listens on port 80 (http port).
-To run the server, there are two ways. Regardless of which method you use to run it, you can provide the port through the `port` enviroment variable.
+To run the server, there are two ways. Regardless of which method you use to run it, you can provide the port through the `port` environment variable.
+For servers with a lot of images or users, you may wish want to increase the length of the file name to prevent conflicts. Use the environment variable `nameLength` to do this - it defaults to `6`.
 
 Run `npm start` to do this. For when this is running in production, you should use a process manager such as [pm2](https://pm2.keymetrics.io/), which can also take care of environment variables for you.
 

@@ -9,11 +9,25 @@ const fs = require("fs");
 const path = require("path");
 const { isAlphanumeric, isLength, isAscii } = require("validator");
 
+let fileNameLength = 6;
+
+// Get file name length
+if (process.env.nameLength) {
+	if (!isNaN(process.env.nameLength)) {
+		const envNameLength = parseInt(process.env.nameLength, 10);
+		if (envNameLength > 1 && envNameLength < 40) {
+			fileNameLength = envNameLength;
+		} else {
+			console.warn(`Warn: Rejected nameLength environment variable - Must be between 1 and 40. Value: ${envNameLength}`);
+		}
+	}
+}
+
 // Multer options
 const storage = multer.diskStorage({
 	destination: dest,
 	filename: async function (req, file, cb) {
-		const tok = await generateFileName(6);
+		const tok = await generateFileName(fileNameLength);
 		file._tok = tok;
 
 		// Extract extension
@@ -43,7 +57,7 @@ const upload = multer({
 const extensions = ["md", "js", "py", "ts", "Lua", "cpp", "c", "bat", "h", "pl", "java", "sh", "swift", "vb", "cs", "haml", "yml", "markdown", "hs", "pl", "ex", "yaml", "jsx", "tsx", "txt"];
 async function getFile (req, res, next) {
 	const { id } = req.params;
-	if (id && isLength(id, { min: 5, max: 15 }) && isAscii(id)) {
+	if (id && isLength(id, { min: Math.min(3, fileNameLength), max: Math.max(15, fileNameLength) }) && isAscii(id)) {
 		const without = removeExt(req.params.id);
 		const idStr = (without === "" ? req.params.id : without);
 		if (!isAlphanumeric(idStr)) {
