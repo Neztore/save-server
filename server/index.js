@@ -49,6 +49,7 @@ app.get("/", (req, res) => {
 		version
 	});});
 app.get("/login", (req, res) => res.render(getLoc("login")));
+app.post("/login", (req, res) => res.render(getLoc("login")));
 
 app.use("/dashboard", auth.redirect);
 app.get("/dashboard", async (req, res) => {
