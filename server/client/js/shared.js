@@ -1,22 +1,27 @@
-function parseDate (time) {
+function parseDate(time) {
 	if (typeof time === "string") {
 		time = new Date(time);
 	}
-	function getClean (date) {
+
+	function getClean(date) {
 		const diff = (((new Date()).getTime() - date.getTime()) / 1000);
 		const day_diff = Math.floor(diff / 86400);
 
-		if (isNaN(day_diff) || day_diff < 0 || day_diff >= 31) { console.log("Bad date"); return; }
+		if (isNaN(day_diff) || day_diff < 0 || day_diff >= 31) {
+			console.log("Bad date");
+			return;
+		}
 		return day_diff === 0 && (
 			diff < 60 && "just now" ||
-            diff < 120 && "1 minute ago" ||
-            diff < 3600 && Math.floor(diff / 60) + " minutes ago" ||
-            diff < 7200 && "1 hour ago" ||
-            diff < 86400 && Math.floor(diff / 3600) + " hours ago") ||
-            day_diff === 1 && "Yesterday" ||
-            day_diff < 7 && day_diff + " days ago" ||
-            day_diff < 31 && Math.ceil(day_diff / 7) + " weeks ago";
+			diff < 120 && "1 minute ago" ||
+			diff < 3600 && Math.floor(diff / 60) + " minutes ago" ||
+			diff < 7200 && "1 hour ago" ||
+			diff < 86400 && Math.floor(diff / 3600) + " hours ago") ||
+			day_diff === 1 && "Yesterday" ||
+			day_diff < 7 && day_diff + " days ago" ||
+			day_diff < 31 && Math.ceil(day_diff / 7) + " weeks ago";
 	}
+
 	const timeString = getClean(time);
 	if (timeString) {
 		return timeString;
@@ -34,7 +39,8 @@ function parseDate (time) {
 		return `${day}/${month}/${year} at ${hour}:${minuteString}`;
 	}
 }
-function deleteFile (fileInfo, cb) {
+
+function deleteFile(fileInfo, cb) {
 	let str = fileInfo.id;
 	if (fileInfo.extension) str += fileInfo.extension;
 	const sure = confirm(`Are you sure you want to delete ${str}?`);
@@ -55,9 +61,10 @@ function deleteFile (fileInfo, cb) {
 		if (cb) cb();
 	}
 }
+
 window.deleteFile = deleteFile;
 
-function logout () {
+function logout() {
 	window.Api.post("/users/@me/logout")
 		.then((res) => {
 			if (res.success) {
@@ -68,10 +75,11 @@ function logout () {
 		})
 		.catch(showError);
 }
+
 window.logout = logout;
 
 // We create dynamically because it's easier than ensuring the HTML code exists on every page.
-function showMessage (headerContent, content, colour, closeAfter, closeCb) {
+function showMessage(headerContent, content, colour, closeAfter, closeCb) {
 	if (closeAfter < 500) {
 		// Assume it's been provided in seconds.
 		closeAfter = closeAfter * 1000;
@@ -99,7 +107,7 @@ function showMessage (headerContent, content, colour, closeAfter, closeCb) {
 	deleteButton.className = "delete";
 	header.appendChild(deleteButton);
 
-	function close () {
+	function close() {
 		if (message) {
 			message.classList.remove("slideInRight");
 			message.classList.add("slideOutRight");
@@ -109,6 +117,7 @@ function showMessage (headerContent, content, colour, closeAfter, closeCb) {
 			if (closeCb) closeCb();
 		}
 	}
+
 	deleteButton.onclick = close;
 
 	message.appendChild(header);
@@ -123,7 +132,7 @@ function showMessage (headerContent, content, colour, closeAfter, closeCb) {
 	return message;
 }
 
-function showError (error) {
+function showError(error) {
 	if (error.error && error.error.status) {
 		error = error.error;
 	}
@@ -137,6 +146,7 @@ function getCookie(name) {
 	const parts = value.split(`; ${name}=`);
 	if (parts.length === 2) return parts.pop().split(";").shift();
 }
+
 window.getCookie = getCookie;
 
 document.addEventListener("DOMContentLoaded", () => {

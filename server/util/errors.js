@@ -4,7 +4,7 @@ const path = require("path");
 
 // "Unfriendly" error messages.
 // eslint-disable-next-line no-unused-vars
-function errorHandler (error, req, res, _next) {
+function errorHandler(error, req, res, _next) {
 	if (error instanceof SyntaxError) {
 		res.status(400).send(errorGenerator(400, "Bad JSON."));
 	} else {
@@ -15,7 +15,7 @@ function errorHandler (error, req, res, _next) {
 }
 
 // Takes inputs and returns a standard error object. Additional is an object whose properties are merged into the error object.
-function errorGenerator (status, message, additional) {
+function errorGenerator(status, message, additional) {
 	return {
 		error: {
 			status,
@@ -24,15 +24,15 @@ function errorGenerator (status, message, additional) {
 		}
 	};
 }
+
 const errorPage = path.join(__dirname, "..", "client", "pages", "error.ejs");
-function prettyError (status, message) {
+
+function prettyError(status, message) {
 	return new Promise((resolve, reject) => {
 		ejs.renderFile(errorPage, {
 			code: status,
 			message
-		}, {
-
-		}, function (err, str) {
+		}, {}, function (err, str) {
 			if (err) return reject(err);
 			resolve(str);
 		});
@@ -49,7 +49,10 @@ const errorCatch = (fn) =>
 	(req, res, next) => {
 		const routePromise = fn(req, res, next);
 		if (routePromise && routePromise.catch) {
-			routePromise.catch((err) => { next(err); console.log("Route error caught", err.message); });
+			routePromise.catch((err) => {
+				next(err);
+				console.log("Route error caught", err.message);
+			});
 		}
 	};
 

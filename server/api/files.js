@@ -1,10 +1,19 @@
 const express = require("express");
 const files = express.Router();
-const { errorCatch, generateFileName, errorGenerator, dest, prettyError, validFile, getBase } = require("../util");
+const {
+	errorCatch,
+	generateFileName,
+	errorGenerator,
+	dest,
+	prettyError,
+	validFile,
+	getBase
+} = require("../util");
 const multer = require("multer");
 const db = require("../util/db");
 const auth = require("../middleware/auth");
 const csrf = require("../middleware/csrf");
+const ratelimit = require("../middleware/ratelimit");
 const fs = require("fs");
 const path = require("path");
 const { isAlphanumeric, isLength, isAscii } = require("validator");
@@ -55,9 +64,13 @@ const upload = multer({
 	}
 });
 const extensions = ["md", "js", "py", "ts", "Lua", "cpp", "c", "bat", "h", "pl", "java", "sh", "swift", "vb", "cs", "haml", "yml", "markdown", "hs", "pl", "ex", "yaml", "jsx", "tsx", "txt"];
-async function getFile (req, res, next) {
+
+async function getFile(req, res, next) {
 	const { id } = req.params;
-	if (id && isLength(id, { min: Math.min(3, fileNameLength), max: Math.max(15, fileNameLength) }) && isAscii(id)) {
+	if (id && isLength(id, {
+		min: Math.min(3, fileNameLength),
+		max: Math.max(15, fileNameLength)
+	}) && isAscii(id)) {
 		const without = removeExt(req.params.id);
 		const idStr = (without === "" ? req.params.id : without);
 		if (!isAlphanumeric(idStr)) {
@@ -96,9 +109,12 @@ async function getFile (req, res, next) {
 		res.status(400).send(await prettyError(400, "You provided an invalid file identifier."));
 	}
 }
+
 files.get("/:id", errorCatch(getFile));
 
+
 // Supports uploading multiple files, even though ShareX doesn't.
+files.post("/", ratelimit(15, 60));
 files.post("/", auth.header, upload.array("files", 10), errorCatch(async function (req, res) {
 	if (!req.user) {
 		return console.log("what??");
@@ -155,13 +171,14 @@ module.exports = {
 	router: files,
 	getFile
 };
+
 /*
     File recieved;
         - Name allocated
         - File extension extracted
         - Saved to database
  */
-function openFile (path) {
+function openFile(path) {
 	return new Promise(function (resolve, reject) {
 		fs.readFile(path, "utf8", (err, data) => {
 			if (err) reject(err);

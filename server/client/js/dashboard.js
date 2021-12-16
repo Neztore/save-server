@@ -37,7 +37,7 @@ window.addEventListener("DOMContentLoaded", function () {
 	const parseDate = window.parseDate;
 	const deleteFile = window.deleteFile;
 	const showMessage = window.showMessage;
-	
+
 	// Sidebar
 	const helloBox = document.getElementById("hello");
 	helloBox.innerText = "Hey, " + window.user.username + "!";
@@ -45,10 +45,12 @@ window.addEventListener("DOMContentLoaded", function () {
 	const getTarget = () => Persist.get("targetUser");
 	const getTab = () => Persist.get("tab");
 	const getFilter = () => Persist.get("filter");
+	const getPage = () => Persist.get("page");
 
 	const setTarget = (value) => Persist.set("targetUser", value);
 	const setTab = (value) => Persist.set("tab", value);
 	const setFilter = (value) => Persist.set("filter", value);
+	const setPage = (value) => Persist.set("page", value);
 
 	// Persistent values - initial
 	if (!Persist.get("targetUser")) {
@@ -56,15 +58,18 @@ window.addEventListener("DOMContentLoaded", function () {
 		setTab(0);
 		// True = Image only.
 		setFilter(true);
+		setPage(0);
 	}
 	// Not persistent
 	let modalTarget;
 
 	const tabs = document.getElementById("main-tabs");
 
-	function bindControl () {
+	function bindControl() {
 		const controllers = tabs.children;
-		if (!controllers) { return showError("Failed to bind control"); }
+		if (!controllers) {
+			return showError("Failed to bind control");
+		}
 
 		// Set initial
 		showContent(getTab());
@@ -77,7 +82,8 @@ window.addEventListener("DOMContentLoaded", function () {
 				showContent(i);
 			};
 		}
-		function setVisibleTab (tabNo) {
+
+		function setVisibleTab(tabNo) {
 			for (let c = 0; c < controllers.length; c++) {
 				if (c === tabNo) {
 					controllers[c].className = "is-active";
@@ -90,7 +96,7 @@ window.addEventListener("DOMContentLoaded", function () {
 
 	bindControl();
 
-	function showContent (pos) {
+	function showContent(pos) {
 		const content = document.getElementsByClassName("page-content")[0];
 
 		for (let i = 0; i < content.children.length; i++) {
@@ -101,10 +107,11 @@ window.addEventListener("DOMContentLoaded", function () {
 			}
 		}
 	}
+
 	// User list - Only bother if user is admin.
 	const list = document.getElementById("users");
 
-	function addBlock (username, me) {
+	function addBlock(username, me) {
 		const block = document.createElement("a");
 		block.className = getTarget() === username ? "is-active panel-block" : "panel-block";
 
@@ -144,13 +151,15 @@ window.addEventListener("DOMContentLoaded", function () {
 			})
 			.catch(showError);
 	}
+
 	// Basically combines all actions that happen when user is updated into 1 function
-	function updateTargetUser (username) {
+	function updateTargetUser(username) {
 		setTarget(username);
 		getFiles();
 		getLinks();
 		userManagement();
 	}
+
 	const refreshButton = document.getElementById("refresh");
 	refreshButton.onclick = function () {
 		updateTargetUser(getTarget());
@@ -161,6 +170,10 @@ window.addEventListener("DOMContentLoaded", function () {
 	const filterImages = document.getElementsByClassName("filter")[0].children[1];
 	const filterAll = document.getElementsByClassName("filter")[0].children[0];
 
+	const nextPage = document.getElementById("next");
+	const prevPage = document.getElementById("previous");
+	const currentPageEle = document.getElementById("current-page");
+
 	// Gallery Filter
 	filterImages.onclick = function () {
 		updateFilter(true);
@@ -170,11 +183,13 @@ window.addEventListener("DOMContentLoaded", function () {
 		updateFilter(false);
 		setAll();
 	};
-	function setImage () {
+
+	function setImage() {
 		filterImages.classList.add("is-active");
 		filterAll.classList.remove("is-active");
 	}
-	function setAll () {
+
+	function setAll() {
 		filterImages.classList.remove("is-active");
 		filterAll.classList.add("is-active");
 	}
@@ -186,16 +201,53 @@ window.addEventListener("DOMContentLoaded", function () {
 		setAll();
 	}
 
-	function updateFilter (state) {
+	// Pagination
+	nextPage.onclick = function () {
+		const currentPage = getPage();
+
+		const newPage = currentPage + 1;
+
+		setPage(newPage);
+		setCurrentPageText(newPage);
+
+		getFiles();
+		window.scrollTo(0, 0);
+	};
+
+	prevPage.onclick = function () {
+		const currentPage = getPage();
+		const newPage = currentPage - 1;
+
+		// Refuse to go below 0
+		if (newPage >= 0) {
+			setPage(newPage);
+			setCurrentPageText(newPage);
+
+			getFiles();
+			window.scrollTo(0, 0);
+		}
+	};
+
+	function setCurrentPageText(no) {
+		currentPageEle.innerText = "" + (no + 1);
+	}
+
+	// Set initial
+	setCurrentPageText(getPage());
+
+	function updateFilter(state) {
 		if (state !== getFilter()) {
 			setFilter(state);
 			showFiles();
 		}
 	}
+
 	let files = [];
-	function getFiles () {
+
+	function getFiles() {
+		const page = getPage();
 		const target = Persist.get("targetUser");
-		Api.get(`/users/${target}/files`)
+		Api.get(`/users/${target}/files?page=${page}`)
 			.then(function (f) {
 				if (f.success) {
 					files = f.files;
@@ -207,11 +259,13 @@ window.addEventListener("DOMContentLoaded", function () {
 			})
 			.catch(showError);
 	}
+
 	getFiles();
 
 	const parent = gallery.getElementsByClassName("columns")[0];
 	const modal = document.getElementsByClassName("modal")[0];
-	function showFiles () {
+
+	function showFiles() {
 		clearChildren(parent);
 		if (files.length === 0) {
 			const noContent = document.createElement("h2");
@@ -238,8 +292,9 @@ window.addEventListener("DOMContentLoaded", function () {
 			}
 		}
 	}
+
 	// Create the gallery boxes - this is a pain in plain JS.
-	function showImage (fileInfo) {
+	function showImage(fileInfo) {
 		const col = document.createElement("div");
 		col.className = "column is-3 outerBox";
 		const img = document.createElement("div");
@@ -271,7 +326,7 @@ window.addEventListener("DOMContentLoaded", function () {
 		};
 	}
 
-	function showFile (fileInfo) {
+	function showFile(fileInfo) {
 		const col = document.createElement("div");
 		col.className = "column is-3 outerBox";
 
@@ -333,7 +388,7 @@ window.addEventListener("DOMContentLoaded", function () {
 		};
 	}
 
-	function clearChildren (ele) {
+	function clearChildren(ele) {
 		while (ele.firstChild) {
 			ele.removeChild(ele.lastChild);
 		}
@@ -342,9 +397,11 @@ window.addEventListener("DOMContentLoaded", function () {
 	// Modal
 	modal.getElementsByClassName("modal-background")[0].onclick = hideModal;
 	modal.getElementsByClassName("modal-close")[0].onclick = hideModal;
-	function hideModal () {
+
+	function hideModal() {
 		modal.classList.remove("is-active");
 	}
+
 	const modalDelete = document.getElementById("modal-delete");
 	modalDelete.onclick = function () {
 		modalDelete.classList.add("is-loading");
@@ -356,7 +413,7 @@ window.addEventListener("DOMContentLoaded", function () {
 	};
 
 	// Links page
-	function getLinks () {
+	function getLinks() {
 		const target = Persist.get("targetUser");
 		Api.get(`/users/${target}/links`)
 			.then(function (f) {
@@ -369,9 +426,10 @@ window.addEventListener("DOMContentLoaded", function () {
 			})
 			.catch(showError);
 	}
+
 	getLinks();
 
-	function showLinks (linksList) {
+	function showLinks(linksList) {
 		const tableParent = document.getElementById("links-parent");
 		clearChildren(tableParent);
 		for (let counter = 0; counter < linksList.length; counter++) {
@@ -432,11 +490,12 @@ window.addEventListener("DOMContentLoaded", function () {
 	}
 
 	// User management - Every time target updates.
-	function userManagement () {
+	function userManagement() {
 		const tar = getTarget();
 		const usernameBox = document.getElementById("settings-username");
 		usernameBox.innerText = tar;
 	}
+
 	userManagement();
 
 	const secondPassField = document.getElementById("pass2-field");
@@ -467,14 +526,14 @@ window.addEventListener("DOMContentLoaded", function () {
 			e.preventDefault();
 			let username = usernameField.value;
 			let password = passwordField.value;
-			
+
 			if (!username || username.length < 3) {
 				return showError("Username must be filled out and be more than 3 characters.");
 			}
 			if (username.length > 50) {
 				return showError("Username cannot be more than 50 characters... why tho?");
 			}
-			
+
 			if (!password || password.length < 3) {
 				return showError("Password must be filled out and be more than 3 characters.");
 			}
@@ -511,11 +570,12 @@ window.addEventListener("DOMContentLoaded", function () {
 
 			return false;
 		};
+
 		function showCreateError(text) {
 			errorBox.innerText = text;
 			errorBox.hidden = false;
 		}
-		
+
 
 	})();
 	(function configButtons() {
@@ -531,7 +591,7 @@ window.addEventListener("DOMContentLoaded", function () {
 			window.location = `/api/users/${target}/config?link=true`;
 		};
 	})();
-	(function passwordReset () {
+	(function passwordReset() {
 		// Password reset
 		const form = document.getElementById("password-change-form");
 		const passwordInput = document.getElementById("password");
@@ -589,14 +649,15 @@ window.addEventListener("DOMContentLoaded", function () {
 				return false;
 			}
 
-			function showPasswordError (text) {
+			function showPasswordError(text) {
 				errorBox.innerText = text;
 				errorBox.hidden = false;
 			}
 		};
 	})();
 	const tokenB = document.getElementById("update-token");
-	function onTokenClick () {
+
+	function onTokenClick() {
 		tokenB.classList.add("is-loading");
 		const tar = getTarget();
 		const sure = confirm("Are you sure you want to do this? You will need to update the ShareX config for this user.");
@@ -621,9 +682,10 @@ window.addEventListener("DOMContentLoaded", function () {
 			tokenB.classList.remove("is-loading");
 		}
 	}
+
 	tokenB.onclick = onTokenClick;
 
-	(function deleteUser () {
+	(function deleteUser() {
 		const deleteAll = document.getElementById("delete-all");
 		const deleteUsr = document.getElementById("delete-user");
 		deleteAll.onclick = function () {
@@ -634,7 +696,7 @@ window.addEventListener("DOMContentLoaded", function () {
 			deleteUser(false);
 		};
 
-		function deleteUser (deleteFiles) {
+		function deleteUser(deleteFiles) {
 			// we don't want user to click the other one while it's deleting
 			deleteAll.classList.add("is-loading");
 			deleteUsr.classList.add("is-loading");
@@ -662,7 +724,7 @@ window.addEventListener("DOMContentLoaded", function () {
 					doneLoading();
 				});
 
-			function doneLoading () {
+			function doneLoading() {
 				deleteAll.classList.remove("is-loading");
 				deleteUsr.classList.remove("is-loading");
 			}

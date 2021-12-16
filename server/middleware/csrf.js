@@ -3,9 +3,10 @@ const { generateToken, errorGenerator } = require("../util");
 
 const protectedMethods = ["post", "patch", "put", "delete"];
 module.exports = async function (req, res, next) {
-	function fail () {
+	function fail() {
 		return res.status(400).send(errorGenerator(400, "Failed CSRF Token validation"));
 	}
+
 	if (protectedMethods.includes(req.method.toLowerCase())) {
 		// Validate CSRF presence
 		if (req.cookies["CSRF-Token"] && req.get("CSRF-Token")) {

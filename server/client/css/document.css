@@ -2,6 +2,7 @@
     background-color: #282c34;
 
 }
+
 body code.warp-content {
     white-space: pre-wrap;
     padding-left: 1.5rem;
@@ -10,24 +11,31 @@ body code.warp-content {
 #markdownRender h1 {
     padding-left: 1rem;
 }
+
 #markdownRender h2 {
     padding-left: 1rem;
 }
+
 #markdownRender h3 {
     padding-left: 1rem;
 }
+
 #markdownRender h4 {
     padding-left: 1rem;
 }
+
 #markdownRender h5 {
     padding-left: 1rem;
 }
+
 #markdownRender h6 {
     padding-left: 1rem;
 }
+
 #markdownRender p {
     padding-left: 1rem;
 }
+
 #level {
     margin-bottom: 0.2em;
     padding-left: 1vw;

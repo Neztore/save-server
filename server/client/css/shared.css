@@ -6,6 +6,7 @@
     transition: .3s;
     max-width: 30rem;
 }
+
 .fixed-message .message {
     margin-bottom: 0.5rem;
 }

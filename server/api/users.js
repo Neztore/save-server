@@ -4,14 +4,31 @@ const express = require("express");
 const users = express.Router();
 const auth = require("../middleware/auth");
 const db = require("../util/db");
-const { errorGenerator, errorCatch, generateToken, errors, dest, hashRounds, adminUser, getBase } = require("../util");
+const {
+	errorGenerator,
+	errorCatch,
+	generateToken,
+	errors,
+	dest,
+	hashRounds,
+	adminUser,
+	getBase
+} = require("../util");
 const { isLength, isAlphanumeric, isEmpty } = require("validator");
 const { compare, hash } = require("bcrypt");
 const fs = require("fs");
 const path = require("path");
 
-const validUsername = (str) => str && typeof str === "string" && isLength(str, { min: 3, max: 50 }) && isAlphanumeric(str);
-const validPassword = (str) => str && typeof str === "string" && isLength(str, { min: 3, max: 100 });
+const BIG = 1000000;
+
+const validUsername = (str) => str && typeof str === "string" && isLength(str, {
+	min: 3,
+	max: 50
+}) && isAlphanumeric(str);
+const validPassword = (str) => str && typeof str === "string" && isLength(str, {
+	min: 3,
+	max: 100
+});
 users.post("/login", errorCatch(async function (req, res) {
 	const username = req.body.username;
 	const password = req.body.password;
@@ -138,7 +155,7 @@ users.delete("/:id", errorCatch(async function (req, res, next) {
 
 	const deleteFiles = req.query.deleteFiles && req.query.deleteFiles === "true";
 
-	const files = await db.getUserFiles(req.target.username);
+	const files = await db.getAllUserFiles(req.target.username);
 	if (deleteFiles) {
 		console.log(`Deleting user ${req.target.username} AND all of their files.`);
 	}
@@ -264,7 +281,23 @@ users.post("/:id/logout", errorCatch(async function (req, res) {
 }));
 
 users.get("/:id/files", errorCatch(async function (req, res) {
-	const files = await db.getUserFiles(req.target.username);
+	let pageNo = 0;
+
+	if (req.query.page && !isNaN(req.query.page)) {
+		try {
+			const no = parseInt(req.query.page, 10);
+			if (typeof no === "number" && no >= 0 && no < BIG) {
+				pageNo = no;
+			} else {
+				return res.status(400).send(errorGenerator(400, "Invalid page number."));
+			}
+		} catch (err) {
+			return res.status(400).send(errorGenerator(400, "Invalid page number."));
+		}
+
+	}
+
+	const files = await db.getUserFiles(req.target.username, pageNo);
 	res.send({ success: true, files });
 }));
 

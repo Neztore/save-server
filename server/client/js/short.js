@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	};
 	const form = document.getElementsByClassName("form")[0];
 
-	async function onSubmit (e) {
+	async function onSubmit(e) {
 		e.preventDefault();
 		const targetUrl = fields.target.value;
 		if (targetUrl && targetUrl !== "") {
@@ -31,9 +31,10 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 		return false;
 	}
+
 	form.addEventListener("submit", onSubmit);
 
-	function showError (text) {
+	function showError(text) {
 		const errorBox = document.getElementsByClassName("error-box")[0];
 		errorBox.innerText = text;
 		errorBox.hidden = false;
