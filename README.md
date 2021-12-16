@@ -110,6 +110,7 @@ The server will not accept passwords longer than 100 characters, and a warning w
 ### Getting help
 To get help setting this up, or if you encounter any issues you can:
 1. Open an issue in the [Issues](https://github.com/Neztore/Save-Server) section of the GitHub repository.
-2. You can contact me on Discord: 
-    - `Neztore#6998`
+2. You can contact me on Discord:
     - [Polaris discord server](https://discord.gg/QevWabU)
+   
+3. Email me: [hi@nezto.re](mailto:hi@nezto.re)

@@ -8,6 +8,7 @@ const users = require("./api/users");
 const links = require("./api/url");
 const auth = require("./middleware/auth");
 const csrf = require("./middleware/csrf");
+const ratelimit = require("./middleware/ratelimit");
 
 const { errorHandler } = require("./util");
 const bodyParser = require("body-parser");
@@ -31,7 +32,15 @@ app.use("/css", express.static(path.join(client, "css")));
 app.use("/js", express.static(path.join(client, "js")));
 app.use("/favicon.ico", express.static(path.join(client, "favicon.ico")));
 
+let limit = 1000;
+if (process.env.ratelimit !== undefined) {
+	limit = parseInt(process.env.ratelimit, 10);
+}
+
 // Routes
+// Global rate limit per minute
+app.use(ratelimit(limit, 60));
+
 app.use("/api/files", files.router);
 app.use("/api/links", links);
 

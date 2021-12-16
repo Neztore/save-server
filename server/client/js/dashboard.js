@@ -211,6 +211,7 @@ window.addEventListener("DOMContentLoaded", function () {
 		setCurrentPageText(newPage);
 
 		getFiles();
+		window.scrollTo(0, 0);
 	};
 
 	prevPage.onclick = function () {
@@ -223,10 +224,11 @@ window.addEventListener("DOMContentLoaded", function () {
 			setCurrentPageText(newPage);
 
 			getFiles();
+			window.scrollTo(0, 0);
 		}
 	};
 
-	function setCurrentPageText (no) {
+	function setCurrentPageText(no) {
 		currentPageEle.innerText = "" + (no + 1);
 	}
 

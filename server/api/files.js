@@ -13,6 +13,7 @@ const multer = require("multer");
 const db = require("../util/db");
 const auth = require("../middleware/auth");
 const csrf = require("../middleware/csrf");
+const ratelimit = require("../middleware/ratelimit");
 const fs = require("fs");
 const path = require("path");
 const { isAlphanumeric, isLength, isAscii } = require("validator");
@@ -111,7 +112,9 @@ async function getFile(req, res, next) {
 
 files.get("/:id", errorCatch(getFile));
 
+
 // Supports uploading multiple files, even though ShareX doesn't.
+files.post("/", ratelimit(15, 60));
 files.post("/", auth.header, upload.array("files", 10), errorCatch(async function (req, res) {
 	if (!req.user) {
 		return console.log("what??");

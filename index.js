@@ -4,5 +4,7 @@ if (require.main === module) {
 	saveServer(process.env.port || 80);
 }
 module.exports = function (port) {
-	saveServer(port || process.env.port || 80);
+	const portToUse = port || process.env.port || 80;
+
+	saveServer(portToUse);
 };

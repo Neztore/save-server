@@ -11,12 +11,12 @@
 
 
     <script>
-        try {
-            <%# Looks weird and kinda is weird, but passes the user to the client. %>
-            window.user = <%- JSON.stringify(user) %>
-        } catch (e) {
-            console.error("User was not provided by server!")
-        }
+			try {
+          <%# Looks weird and kinda is weird, but passes the user to the client. %>
+				window.user = <%- JSON.stringify(user) %>
+			} catch (e) {
+				console.error("User was not provided by server!")
+			}
     </script>
     <script src="/js/storage.js"></script>
     <script src="/js/dashboard.js"></script>
