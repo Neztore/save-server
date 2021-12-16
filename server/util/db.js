@@ -5,6 +5,8 @@ const { hash } = require("bcrypt");
 const defaultPassword = "saveServerRoot";
 const { access, constants } = require("fs");
 
+const PAGE_SIZE = 200;
+
 class Database extends sqlite.Database {
 	constructor(name) {
 		super(join(__dirname, name), function (err) {
@@ -131,8 +133,14 @@ class Database extends sqlite.Database {
 		return this.getOne(SQL, [username]);
 	}
 
-	async getUserFiles(username) {
-		const SQL = "SELECT datetime(created,'unixepoch') as created, id, owner, extension FROM files WHERE owner = $1 ORDER BY created desc LIMIT 600;";
+	async getUserFiles(username, page = 0) {
+		const offset = page * PAGE_SIZE;
+		const SQL = `SELECT datetime(created,'unixepoch') as created, id, owner, extension FROM files WHERE owner = $1 ORDER BY created desc LIMIT ${PAGE_SIZE} OFFSET ${offset};`;
+		return this.getLots(SQL, [username]);
+	}
+
+	async getAllUserFiles(username) {
+		const SQL = "SELECT datetime(created,'unixepoch') as created, id, owner, extension FROM files WHERE owner = $1 ORDER BY created desc;";
 		return this.getLots(SQL, [username]);
 	}
 
