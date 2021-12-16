@@ -7,7 +7,7 @@ const adminUser = "root";
 const hashRounds = 12;
 
 // Dirty? Absolutely. Works? Yes.
-function generateFileName (len = 6) {
+function generateFileName(len = 6) {
 	return new Promise(function (resolve, reject) {
 		randomBytes(len, function (err, buffer) {
 			if (err) {
@@ -22,7 +22,8 @@ function generateFileName (len = 6) {
 const dest = path.join(__dirname, "..", "..", "uploads");
 
 const fileWhitelist = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.0123456789";
-function generateToken () {
+
+function generateToken() {
 	return new Promise(function (resolve, reject) {
 		randomBytes(80, function (err, buffer) {
 			if (err) {
@@ -35,9 +36,12 @@ function generateToken () {
 }
 
 const validTag = (tag) => typeof tag === "string" && !isEmpty(tag) && isAlphanumeric(tag);
-const validFile = (tag) => typeof tag === "string" && !isEmpty(tag) && isWhitelisted(tag, fileWhitelist) && isLength(tag, { min: 6, max: 20 });
+const validFile = (tag) => typeof tag === "string" && !isEmpty(tag) && isWhitelisted(tag, fileWhitelist) && isLength(tag, {
+	min: 6,
+	max: 20
+});
 
-const getBase = (req)=> `${req.secure ? "https" : "http"}://${req.get("host")}`;
+const getBase = (req) => `${req.secure ? "https" : "http"}://${req.get("host")}`;
 module.exports = {
 	generateToken,
 	generateFileName,

@@ -11,7 +11,7 @@
     <script src="/js/api.js"></script>
     <% if (isRendered) { %>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.8.2/marked.min.js"></script>
-    <% }  %>
+    <% } %>
     <link rel="stylesheet"
           href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/atom-one-dark.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
@@ -24,62 +24,57 @@
 <%- include('../partials/navbar.ejs'); %>
 
 
+<div class="level" id="level">
+    <div class="level-left">
+        <div class="level-item">
+            <h2 class="title"><%= fileName %></h2>
+        </div>
+        <div class="level-item">
+            <h2 class="subtitle"><%= owner %></h2>
+        </div>
 
 
-        <div class="level" id="level">
-            <div class="level-left">
-               <div class="level-item">
-                   <h2 class="title"><%=fileName%></h2>
-               </div>
-                <div class="level-item">
-                    <h2 class="subtitle"><%=owner%></h2>
-                </div>
-
-
-            </div>
-            <% if (isRendered) { %>
-                <div class="level-item">
-                    <div class="buttons has-addons filter">
-                        <button class="button is-active" id="show-render">Rendered</button>
-                        <button class="button" id="show-code">Code</button>
-                    </div>
-                </div>
-
-            <% } %>
-            <div class="level-right">
-                <% if (isUser) { %>
-
-                <div class="level-item">
-                        <button class="button is-danger" id="delete">Delete</button>
-                    </div>
-                    <% } %>
-                    <div class="level-item">
-                    <a class="button is-success" id="download" href="?download=true" download="<%=fileName%>">Download</a>
-                </div>
+    </div>
+    <% if (isRendered) { %>
+        <div class="level-item">
+            <div class="buttons has-addons filter">
+                <button class="button is-active" id="show-render">Rendered</button>
+                <button class="button" id="show-code">Code</button>
             </div>
         </div>
 
-        <% if (isRendered) { %>
-        <section class="page-content">
-            <pre id="markdown-render" class="content warp-content"><%= content %></pre>
-            <div id="code"  class="hidden">
+    <% } %>
+    <div class="level-right">
+        <% if (isUser) { %>
+
+            <div class="level-item">
+                <button class="button is-danger" id="delete">Delete</button>
+            </div>
+        <% } %>
+        <div class="level-item">
+            <a class="button is-success" id="download" href="?download=true"
+               download="<%= fileName %>">Download</a>
+        </div>
+    </div>
+</div>
+
+<% if (isRendered) { %>
+    <section class="page-content">
+        <pre id="markdown-render" class="content warp-content"><%= content %></pre>
+        <div id="code" class="hidden">
                  <pre>
                 <code class="is-fullwidth"><%= content %></code>
             </pre>
-            </div>
+        </div>
 
 
-        </section>
+    </section>
 
-    <% } else { %>
+<% } else { %>
 
-            <code class="warp-content"><%= content %></code>
+    <code class="warp-content"><%= content %></code>
 
-    <% }  %>
-
-
-
-
+<% } %>
 
 </body>
 </html>

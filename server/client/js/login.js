@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		fields.password.type = state ? "text" : "password";
 	});
 
-	async function onSubmit (e) {
+	async function onSubmit(e) {
 		e.preventDefault();
 		const username = fields.username.value;
 		const password = fields.password.value;
@@ -33,9 +33,10 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 		return false;
 	}
+
 	form.onsubmit = onSubmit;
 
-	function showError (text) {
+	function showError(text) {
 		const errorBox = document.getElementsByClassName("error-box")[0];
 		errorBox.innerText = text;
 		errorBox.hidden = false;

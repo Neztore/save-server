@@ -43,11 +43,13 @@ app.use("/u", links);
 // Main routes
 const getLoc = (n) => path.join(pages, `${n}.ejs`);
 app.get("/", (req, res) => {
-	const runningHours = process.uptime()/(60*60);
+	const runningHours = process.uptime() / (60 * 60);
 	return res.render(getLoc("index"), {
 		runningFor: (Math.floor(runningHours * 10) / 10), // uptime in hours, rounded to 1 decimal
 		version
-	});});
+	});
+});
+
 app.get("/login", (req, res) => res.render(getLoc("login")));
 app.post("/login", (req, res) => res.render(getLoc("login")));
 
@@ -78,7 +80,7 @@ process.on("uncaughtException", err => {
 	console.error("There was an uncaught error", err);
 });
 
-module.exports = function(port = 80) {
+module.exports = function (port = 80) {
 	app.listen(port, () => console.log(`SaveServer running on port ${port}!`));
 	app.set("port", port);
 };

@@ -25,7 +25,7 @@ url.get("/:tag", errorCatch(async function (req, res, next) {
 }));
 
 
-async function processAddLink (req, res) {
+async function processAddLink(req, res) {
 	if (!req.user) {
 		throw new Error("no user...?");
 	}

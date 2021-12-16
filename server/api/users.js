@@ -4,14 +4,29 @@ const express = require("express");
 const users = express.Router();
 const auth = require("../middleware/auth");
 const db = require("../util/db");
-const { errorGenerator, errorCatch, generateToken, errors, dest, hashRounds, adminUser, getBase } = require("../util");
+const {
+	errorGenerator,
+	errorCatch,
+	generateToken,
+	errors,
+	dest,
+	hashRounds,
+	adminUser,
+	getBase
+} = require("../util");
 const { isLength, isAlphanumeric, isEmpty } = require("validator");
 const { compare, hash } = require("bcrypt");
 const fs = require("fs");
 const path = require("path");
 
-const validUsername = (str) => str && typeof str === "string" && isLength(str, { min: 3, max: 50 }) && isAlphanumeric(str);
-const validPassword = (str) => str && typeof str === "string" && isLength(str, { min: 3, max: 100 });
+const validUsername = (str) => str && typeof str === "string" && isLength(str, {
+	min: 3,
+	max: 50
+}) && isAlphanumeric(str);
+const validPassword = (str) => str && typeof str === "string" && isLength(str, {
+	min: 3,
+	max: 100
+});
 users.post("/login", errorCatch(async function (req, res) {
 	const username = req.body.username;
 	const password = req.body.password;

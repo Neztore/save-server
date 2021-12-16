@@ -3,7 +3,7 @@ const { join } = require("path");
 const { adminUser, hashRounds, dest } = require("./index");
 const { hash } = require("bcrypt");
 const defaultPassword = "saveServerRoot";
-const { access, constants }= require("fs");
+const { access, constants } = require("fs");
 
 class Database extends sqlite.Database {
 	constructor(name) {
@@ -15,7 +15,7 @@ class Database extends sqlite.Database {
 			}
 		});
 		const db = this;
-		this.once("open", async  function () {
+		this.once("open", async function () {
 			// Check that "root" exists
 			try {
 				const root = await this.getUser(adminUser);
@@ -33,9 +33,10 @@ class Database extends sqlite.Database {
 		// 30 minutes.
 		setInterval(this.checkFiles.bind(this), 1800000);
 	}
+
 	// DB Clean-up: Checks that all files on disk.
 	// If a file doesn't exist, it is removed from the database.
-	async checkFiles () {
+	async checkFiles() {
 		const db = this;
 		const files = await this.getFiles();
 		if (files) {
@@ -52,7 +53,7 @@ class Database extends sqlite.Database {
 	}
 
 	// Generic
-	async getOne (sql, ...args) {
+	async getOne(sql, ...args) {
 		const db = this;
 		return new Promise(function (resolve, reject) {
 			try {
@@ -66,7 +67,8 @@ class Database extends sqlite.Database {
 
 		});
 	}
-	async getLots (sql, ...args) {
+
+	async getLots(sql, ...args) {
 		const db = this;
 		return new Promise(function (resolve, reject) {
 			try {
@@ -80,7 +82,8 @@ class Database extends sqlite.Database {
 
 		});
 	}
-	async query (sql, ...args) {
+
+	async query(sql, ...args) {
 		const db = this;
 		return new Promise(function (resolve, reject) {
 			try {
@@ -97,38 +100,45 @@ class Database extends sqlite.Database {
 
 
 	// Gets
-	async getFile (id) {
+	async getFile(id) {
 		const SQL = "SELECT * from files WHERE id = $1 LIMIT 1";
 		return this.getOne(SQL, [id]);
 	}
-	async getLink (id) {
+
+	async getLink(id) {
 		const SQL = "SELECT * from links WHERE id = $1 LIMIT 1";
 		return this.getOne(SQL, [id]);
 	}
-	getFiles () {
+
+	getFiles() {
 		const SQL = "SELECT datetime(created,'unixepoch') as created, id, owner, extension FROM files ORDER BY created DESC;";
 		return this.getLots(SQL);
 
 	}
-	getLinks (username) {
+
+	getLinks(username) {
 		const SQL = "SELECT datetime(created,'unixepoch') as created, id, url, owner FROM links WHERE links.owner = $1 ORDER BY created DESC LIMIT 600;";
 		return this.getLots(SQL, [username]);
 	}
-	getUsers () {
+
+	getUsers() {
 		const SQL = "SELECT username from users";
 		return this.getLots(SQL);
 	}
-	getUser (username) {
+
+	getUser(username) {
 		const SQL = "SELECT * from users WHERE username = $1 LIMIT 1;";
 		return this.getOne(SQL, [username]);
 	}
-	async getUserFiles (username) {
+
+	async getUserFiles(username) {
 		const SQL = "SELECT datetime(created,'unixepoch') as created, id, owner, extension FROM files WHERE owner = $1 ORDER BY created desc LIMIT 600;";
 		return this.getLots(SQL, [username]);
 	}
-	getUserByToken (token) {
+
+	getUserByToken(token) {
 		// Just to double check, ensure token is defined.
-		if (!token || typeof  token !== "string") {
+		if (!token || typeof token !== "string") {
 			throw new Error("Illegal authorisation token!");
 		}
 		const SQL = "SELECT username, token FROM users WHERE token = $1 LIMIT 1;";
@@ -136,51 +146,59 @@ class Database extends sqlite.Database {
 	}
 
 	// Adds
-	addFile (id, extension, userId) {
+	addFile(id, extension, userId) {
 		const SQL = "INSERT INTO files (id, extension, owner) VALUES ($1, $2, $3)";
 		return this.query(SQL, [id, extension, userId]);
 	}
-	addUser (username, passwordHash) {
+
+	addUser(username, passwordHash) {
 		const SQL = "INSERT INTO users (username, password) VALUES ($1, $2)";
 		return this.query(SQL, [username, passwordHash]);
 	}
+
 	// Link shortener
-	addLink (id, url, owner) {
+	addLink(id, url, owner) {
 		const SQL = "INSERT INTO links (id, url, owner) VALUES ($1, $2, $3)";
 		return this.query(SQL, [id, url, owner]);
 	}
 
 	// Removes
-	removeFile (id) {
+	removeFile(id) {
 		const SQL = "DELETE FROM files WHERE id = $1";
 		return this.query(SQL, [id]);
 	}
-	removeLink (id) {
+
+	removeLink(id) {
 		const SQL = "DELETE FROM links WHERE id = $1";
 		return this.query(SQL, [id]);
 	}
-	async removeUser (username) {
+
+	async removeUser(username) {
 		const SQL = "DELETE FROM users WHERE username = $1";
 		await this.query(SQL, [username]);
 		const removeFilesSQL = "DELETE FROM FILES where owner = $1";
 		return this.query(removeFilesSQL, [username]);
 	}
 
-	setPassword (username, password) {
+	setPassword(username, password) {
 		const SQL = "UPDATE users SET password=$1 WHERE username=$2;";
 		return this.query(SQL, [password, username]);
 	}
-	setFilesOwner (oldOwner, newOwner) {
+
+	setFilesOwner(oldOwner, newOwner) {
 		const SQL = "UPDATE files SET owner=$1 WHERE owner = $2;";
 		return this.query(SQL, [newOwner, oldOwner]);
 	}
-	setToken (username, token) {
+
+	setToken(username, token) {
 		const SQL = "UPDATE users SET token=$1 WHERE username=$2";
 		return this.query(SQL, [token, username]);
 	}
-	expireToken (username) {
+
+	expireToken(username) {
 		return this.setToken(username, undefined);
 	}
 
 }
+
 module.exports = new Database("save-server-database.db");

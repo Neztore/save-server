@@ -1,43 +1,55 @@
 .main {
     padding: 0.2em;
 }
+
 #gallery .columns {
     margin-right: 0.2em;
 }
+
 .modal .level {
     padding-top: 0.2em;
 }
+
 .ml {
     margin-right: 0.3em;
 }
+
 #gallery .is-vcentered {
     height: 100%;
     text-align: center;
 }
+
 #gallery .outerBox .is-vcentered .icon {
-    margin:auto;
+    margin: auto;
 }
+
 .outerBox {
     height: 17.5vw;
     cursor: pointer;
 }
+
 .file-box {
     height: 100%;
 }
+
 .modal img {
     max-height: 70vh;
 }
+
 .m-box {
 
 }
+
 .modal .modal-content .box {
     min-height: 30vh;
     margin-bottom: 0.2em;
 }
+
 .modal .modal-content .image img {
     width: auto;
     margin: auto;
 }
+
 #trust {
     margin-left: 2rem;
     margin-right: 2rem;
