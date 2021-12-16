@@ -284,7 +284,6 @@ users.get("/:id/files", errorCatch(async function (req, res) {
 	let pageNo = 0;
 
 	if (req.query.page && !isNaN(req.query.page)) {
-		console.log(req.query.page);
 		try {
 			const no = parseInt(req.query.page, 10);
 			if (typeof no === "number" && no >= 0 && no < BIG) {

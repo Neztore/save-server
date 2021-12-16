@@ -45,10 +45,12 @@ window.addEventListener("DOMContentLoaded", function () {
 	const getTarget = () => Persist.get("targetUser");
 	const getTab = () => Persist.get("tab");
 	const getFilter = () => Persist.get("filter");
+	const getPage = () => Persist.get("page");
 
 	const setTarget = (value) => Persist.set("targetUser", value);
 	const setTab = (value) => Persist.set("tab", value);
 	const setFilter = (value) => Persist.set("filter", value);
+	const setPage = (value) => Persist.set("page", value);
 
 	// Persistent values - initial
 	if (!Persist.get("targetUser")) {
@@ -56,6 +58,7 @@ window.addEventListener("DOMContentLoaded", function () {
 		setTab(0);
 		// True = Image only.
 		setFilter(true);
+		setPage(0);
 	}
 	// Not persistent
 	let modalTarget;
@@ -167,6 +170,10 @@ window.addEventListener("DOMContentLoaded", function () {
 	const filterImages = document.getElementsByClassName("filter")[0].children[1];
 	const filterAll = document.getElementsByClassName("filter")[0].children[0];
 
+	const nextPage = document.getElementById("next");
+	const prevPage = document.getElementById("previous");
+	const currentPageEle = document.getElementById("current-page");
+
 	// Gallery Filter
 	filterImages.onclick = function () {
 		updateFilter(true);
@@ -194,6 +201,38 @@ window.addEventListener("DOMContentLoaded", function () {
 		setAll();
 	}
 
+	// Pagination
+	nextPage.onclick = function () {
+		const currentPage = getPage();
+
+		const newPage = currentPage + 1;
+
+		setPage(newPage);
+		setCurrentPageText(newPage);
+
+		getFiles();
+	};
+
+	prevPage.onclick = function () {
+		const currentPage = getPage();
+		const newPage = currentPage - 1;
+
+		// Refuse to go below 0
+		if (newPage >= 0) {
+			setPage(newPage);
+			setCurrentPageText(newPage);
+
+			getFiles();
+		}
+	};
+
+	function setCurrentPageText (no) {
+		currentPageEle.innerText = "" + (no + 1);
+	}
+
+	// Set initial
+	setCurrentPageText(getPage());
+
 	function updateFilter(state) {
 		if (state !== getFilter()) {
 			setFilter(state);
@@ -204,8 +243,9 @@ window.addEventListener("DOMContentLoaded", function () {
 	let files = [];
 
 	function getFiles() {
+		const page = getPage();
 		const target = Persist.get("targetUser");
-		Api.get(`/users/${target}/files`)
+		Api.get(`/users/${target}/files?page=${page}`)
 			.then(function (f) {
 				if (f.success) {
 					files = f.files;
