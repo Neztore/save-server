@@ -65,7 +65,26 @@ const saveServer = require("save-server");
 saveServer(3000)
 ```
 
-#### 2.3 Changing the root password
+#### 2.3: Using Docker
+The project contains a Dockerfile for building and running the server in a Docker container. You can set the build-time variables `port` and `nameLength` to configure these as mentioned [previously](#2-running-and-configuring-the-server). The image will inform Docker that it listens on the port specified by the build-time variable (80 by default).
+
+A Docker bind mount is required to persist the database located at `server/util/save-server-database.db`. Additionally, a Docker volume mounted at `/usr/src/app/uploads` is required in order to persist uploaded files. You can create a volume with `docker volume create save-server-uploads` (following examples assume a volume named `save-server-uploads`).
+
+The following will build an image with default values, and run a container in the background (`-d`) with port 80 (default server port) in the container mapped to port 80 on the host:
+```sh
+docker build -t save-server .
+docker run -dp 80:80 -v "$(pwd)"/server/util/save-server-database.db:/usr/src/app/server/util/save-server-database.db -v save-server-uploads:/usr/src/app/uploads save-server
+```
+
+The following will build an image with `port` set to 3000, `nameLength` to 8, and publish port 3000 in the container to port 80 on the host:
+```sh
+docker build -t save-server --build-arg port=3000 nameLength=8 .
+docker run -dp 80:3000 -v "$(pwd)"/server/util/save-server-database.db:/usr/src/app/server/util/save-server-database.db -v save-server-uploads:/usr/src/app/uploads save-server
+```
+
+See the [Docker documentation](https://docs.docker.com/) for more information on Docker.
+
+#### 2.4 Changing the root password
 > You **must** change the root password, otherwise this installation will be **horrifically** insecure.
 
 Once you have the server running, open the dashboard and login to the root account with the following details:
