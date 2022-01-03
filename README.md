@@ -96,6 +96,13 @@ Please note that you must ensure that your proxy passes the `host` and `X-Forwar
             proxy_set_header X-Forwarded-Proto $scheme;
         }
     }
+ 
+### Environment variables
+| Name | Type | Default | Desc |
+| ---- | ---- | ------- | ---- |
+| port | number | 80 | Defines the port Save-Server will listen on. |
+| cloudflare_limiting | boolean | false | Set to `true` to require the use of Cloudflare, so `connecting_ip` exists. If you use Cloudflare and do not enable this, rate limiting may not function as expected. |
+
 ## About
 Each user is allocated a token. This token is used both to authenticate ShareX uploads and web panel access, through a cookie. This server features a rest API.
 

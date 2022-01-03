@@ -72,10 +72,9 @@ setInterval(() => {
 function getIp(req) {
 	const ip = req.get("CF-Connecting-IP");
 	if (!ip) {
-		if (process.env.NODE_ENV === "production") {
+		if (process.env.NODE_ENV === "production" && process.env.cloudflare_limiting === "true") {
 			throw new Error("No Cloudflare IP available");
 		} else {
-			console.log("Falling back to IP");
 			return req.ip;
 		}
 	}
