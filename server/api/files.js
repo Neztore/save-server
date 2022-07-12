@@ -18,13 +18,18 @@ const fs = require("fs");
 const path = require("path");
 const { isAlphanumeric, isLength, isAscii } = require("validator");
 
-let fileNameLength = 6;
+// Max size of extension (dot and all, i.e. .png, .jpeg)
+// This is used in validation and just increases the total length of the valid token.
+const DEFAULT_FILE_NAME_LENGTH = 6;
+const MAX_EXTENSION_SIZE = 8;
+
+let fileNameLength = DEFAULT_FILE_NAME_LENGTH;
 
 // Get file name length
 if (process.env.nameLength) {
 	if (!isNaN(process.env.nameLength)) {
 		const envNameLength = parseInt(process.env.nameLength, 10);
-		if (envNameLength > 1 && envNameLength < 40) {
+		if (envNameLength > 1 && envNameLength <= 40) {
 			fileNameLength = envNameLength;
 		} else {
 			console.warn(`Warn: Rejected nameLength environment variable - Must be between 1 and 40. Value: ${envNameLength}`);
@@ -67,15 +72,20 @@ const extensions = ["md", "js", "py", "ts", "Lua", "cpp", "c", "bat", "h", "pl",
 
 async function getFile(req, res, next) {
 	const { id } = req.params;
+	// Check main length with allowances for extension length.
 	if (id && isLength(id, {
 		min: Math.min(3, fileNameLength),
-		max: Math.max(15, fileNameLength)
+		max: Math.max(DEFAULT_FILE_NAME_LENGTH + MAX_EXTENSION_SIZE, fileNameLength + MAX_EXTENSION_SIZE)
 	}) && isAscii(id)) {
 		const without = removeExt(req.params.id);
 		const idStr = (without === "" ? req.params.id : without);
 		if (!isAlphanumeric(idStr)) {
-			res.status(400).send(prettyError(400, "You provided an invalid file identifier, it should be alphanumeric."));
+			return res.status(400).send(prettyError(400, "You provided an invalid file identifier, it should be alphanumeric."));
 		}
+		if (idStr.length > fileNameLength) {
+			return res.status(400).send(prettyError(400, "File name portion too large."));
+		}
+
 		const file = await db.getFile(idStr);
 		if (file) {
 			const loc = `${file.id}${file.extension ? `.${file.extension}` : ""}`;

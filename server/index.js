@@ -25,6 +25,7 @@ app.use(cookie());
 app.set("x-powered-by", false);
 
 
+
 // Client
 const client = path.join(__dirname, "client");
 const pages = path.join(client, "pages");
