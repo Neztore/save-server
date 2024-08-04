@@ -10,9 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+	with:
+	  node-version: 20
       - uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 20
           registry-url: https://registry.npmjs.org/
       - run: npm publish
         env:
