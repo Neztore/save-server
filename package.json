@@ -17,8 +17,8 @@
     "image host",
     "save-server"
   ],
-  "author": "Neztore <hi@nezto.re> (https://nezto.re)",
-  "license": "MIT",
+  "author": "Josh Muir <muir@josh.scot> (https://josh.scot)",
+  "license": "GPL-3.0-only",
   "dependencies": {
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",

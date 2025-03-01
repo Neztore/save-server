@@ -15,7 +15,6 @@ Another interesting feature is that it fetches files based purely on their name 
 - Markdown and code rendering, with syntax highlighting
 - Flexible extensions (Files are identified by the name, extension is ignored)
 
-Demo/Example (My instance): [https://i.nezto.re](https://i.nezto.re).
 
 ## Setting up
 ### Prerequisites
@@ -31,7 +30,7 @@ Use the command line program `git`:
 $ git clone https://github.com/neztore/save-server
 ```
 or, you can click Download on this page and then unzip it.
-Then, you need to install depdencies:
+Then, you need to install dependencies:
 ```bash
 $ cd save-server
 $ npm install
@@ -135,5 +134,4 @@ The server will not accept passwords longer than 100 characters, and a warning w
 
 ### Getting help
 To get help setting this up, or if you encounter any issues you can:
-1. Open an issue in the [Issues](https://github.com/Neztore/Save-Server) section of the GitHub repository.   
-2. Email me: [hi@nezto.re](mailto:hi@nezto.re)
+Open an issue in the [Issues](https://github.com/Neztore/Save-Server) section of the GitHub repository.
