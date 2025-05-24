@@ -1,6 +1,6 @@
 {
   "name": "save-server",
-  "version": "1.5.6",
+  "version": "1.5.7",
   "description": "A powerful ShareX image and URL server, with support for multiple users.",
   "main": "index.js",
   "scripts": {
