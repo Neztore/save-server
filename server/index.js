@@ -97,6 +97,7 @@ process.on("uncaughtException", err => {
 });
 
 module.exports = function (port = 80) {
-	app.listen(port, () => console.log(`SaveServer running on port ${port}!`));
+	const server = app.listen(port, () => console.log(`SaveServer running on port ${port}!`));
 	app.set("port", port);
+	return server;
 };
