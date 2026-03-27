@@ -69,7 +69,7 @@ users.post("/login", errorCatch(async function (req, res) {
 				return res.status(403).send(errorGenerator(403, "Forbidden: Invalid username or password."));
 			}
 		} else {
-			return res.status(404).send(errorGenerator(404, "User not found."));
+			return res.status(403).send(errorGenerator(403, "Forbidden: Invalid username or password."));
 		}
 	} else {
 		return res.status(400).send(errorGenerator(400, "Invalid username."));

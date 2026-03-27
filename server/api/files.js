@@ -104,7 +104,9 @@ async function getFile(req, res, next) {
 			}
 
 			const options = {
-				root: dest
+				root: dest,
+				maxAge: 604800000,
+				immutable: true
 			};
 			res.sendFile(loc, options, function (err) {
 				if (err) {

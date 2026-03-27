@@ -265,8 +265,28 @@ window.addEventListener("DOMContentLoaded", function () {
 	const parent = gallery.getElementsByClassName("columns")[0];
 	const modal = document.getElementsByClassName("modal")[0];
 
+	// Lazy-load images as they scroll into view
+	let lazyObserver;
+	function createLazyObserver() {
+		if (lazyObserver) lazyObserver.disconnect();
+		lazyObserver = new IntersectionObserver(function (entries) {
+			for (let i = 0; i < entries.length; i++) {
+				if (entries[i].isIntersecting) {
+					const el = entries[i].target;
+					const bg = el.getAttribute("data-bg");
+					if (bg) {
+						el.style.backgroundImage = "url('" + bg + "')";
+						el.removeAttribute("data-bg");
+					}
+					lazyObserver.unobserve(el);
+				}
+			}
+		}, { rootMargin: "200px" });
+	}
+
 	function showFiles() {
 		clearChildren(parent);
+		createLazyObserver();
 		if (files.length === 0) {
 			const noContent = document.createElement("h2");
 			noContent.className = "has-text-centered";
@@ -300,11 +320,12 @@ window.addEventListener("DOMContentLoaded", function () {
 		const img = document.createElement("div");
 
 		const url = `${BaseUrl}/${fileInfo.id}.${fileInfo.extension}`;
-		img.style.backgroundImage = `url('${url}')`;
+		img.setAttribute("data-bg", url);
 		img.style.backgroundSize = "cover";
 		img.className = "file-box box";
 		col.appendChild(img);
 		parent.appendChild(col);
+		if (lazyObserver) lazyObserver.observe(img);
 
 		col.onclick = function (e) {
 			e.preventDefault();
@@ -671,7 +692,12 @@ window.addEventListener("DOMContentLoaded", function () {
 
 						showMessage("Token reset", str, "success", 15000);
 						const tokenBox = document.getElementById("reset-box");
-						tokenBox.innerHTML = `Success! New token: <code>${res.token}</code>.`;
+						tokenBox.textContent = "";
+					tokenBox.appendChild(document.createTextNode("Success! New token: "));
+					var code = document.createElement("code");
+					code.textContent = res.token;
+					tokenBox.appendChild(code);
+					tokenBox.appendChild(document.createTextNode("."));
 						tokenBox.hidden = false;
 					} else {
 						showError(res.error);
