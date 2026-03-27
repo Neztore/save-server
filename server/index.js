@@ -24,14 +24,20 @@ app.use(bodyParser.json());
 app.use(cookie());
 app.set("x-powered-by", false);
 
-
+// Security headers
+app.use(function (_req, res, next) {
+	res.setHeader("X-Content-Type-Options", "nosniff");
+	res.setHeader("X-Frame-Options", "DENY");
+	res.setHeader("Referrer-Policy", "no-referrer");
+	next();
+});
 
 // Client
 const client = path.join(__dirname, "client");
 const pages = path.join(client, "pages");
-app.use("/css", express.static(path.join(client, "css")));
-app.use("/js", express.static(path.join(client, "js")));
-app.use("/favicon.ico", express.static(path.join(client, "favicon.ico")));
+app.use("/css", express.static(path.join(client, "css"), { maxAge: "1d" }));
+app.use("/js", express.static(path.join(client, "js"), { maxAge: "1d" }));
+app.use("/favicon.ico", express.static(path.join(client, "favicon.ico"), { maxAge: "7d" }));
 
 let limit = 1000;
 if (process.env.ratelimit !== undefined) {
